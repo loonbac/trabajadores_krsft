@@ -1,0 +1,11 @@
+{
+    "name": "Trabajadores",
+    "display_name": "Gestión de Trabajadores",
+    "version": "1.0.0",
+    "description": "Módulo para gestionar trabajadores del sistema",
+    "icon": "users",
+    "gradient": "linear-gradient(135deg, #667eea, #764ba2)",
+    "author": "loonbac21",
+    "enabled": true,
+    "dependencies": []
+}
