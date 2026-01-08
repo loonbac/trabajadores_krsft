@@ -129,7 +129,7 @@
                 <option value="Licencia">Licencia</option>
               </select>
               
-              <button @click="activeTab = 'create'; resetForm()" class="btn-refresh">
+              <button @click="openCreateModal" class="btn-refresh">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -150,7 +150,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
               <p>No hay trabajadores registrados</p>
-              <button @click="activeTab = 'create'" class="btn-primary">Agregar primer trabajador</button>
+              <button @click="openCreateModal" class="btn-primary">Agregar primer trabajador</button>
             </div>
             
             <table v-else class="data-table">
@@ -477,6 +477,174 @@
     <div v-if="toast.show" :class="['toast', toast.type]">
       {{ toast.message }}
     </div>
+
+    <!-- MODAL FLOTANTE: CREAR/EDITAR -->
+    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal-container">
+        <button @click="closeModal" class="modal-close" title="Cerrar">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div class="modal-form-card">
+          <h2>{{ editingId ? 'Editar Trabajador' : 'Nuevo Trabajador' }}</h2>
+          <p class="form-subtitle">Complete los campos requeridos (*) para registrar al trabajador.</p>
+          
+          <form @submit.prevent="saveTrabajador" class="worker-form">
+            <!-- Datos Personales -->
+            <div class="form-section-title">Datos Personales</div>
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label>DNI/CE *</label>
+                <input v-model="form.dni" type="text" maxlength="12" required placeholder="12345678" />
+              </div>
+              
+              <div class="form-group">
+                <label>Nombres *</label>
+                <input v-model="form.nombres" type="text" required placeholder="Juan Carlos" />
+              </div>
+              
+              <div class="form-group">
+                <label>Apellido Paterno *</label>
+                <input v-model="form.apellido_paterno" type="text" required placeholder="García" />
+              </div>
+              
+              <div class="form-group">
+                <label>Apellido Materno</label>
+                <input v-model="form.apellido_materno" type="text" placeholder="López" />
+              </div>
+              
+              <div class="form-group">
+                <label>Fecha de Nacimiento</label>
+                <input v-model="form.fecha_nacimiento" type="date" />
+              </div>
+              
+              <div class="form-group">
+                <label>Género</label>
+                <select v-model="form.genero">
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Estado Civil</label>
+                <select v-model="form.estado_civil">
+                  <option value="Soltero">Soltero</option>
+                  <option value="Casado">Casado</option>
+                  <option value="Divorciado">Divorciado</option>
+                  <option value="Viudo">Viudo</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input v-model="form.telefono" type="tel" placeholder="999888777" />
+              </div>
+              
+              <div class="form-group span-2">
+                <label>Email</label>
+                <input v-model="form.email" type="email" placeholder="correo@empresa.com" />
+              </div>
+              
+              <div class="form-group span-full">
+                <label>Dirección</label>
+                <input v-model="form.direccion" type="text" placeholder="Av. Principal 123" />
+              </div>
+            </div>
+
+            <!-- Datos Laborales -->
+            <div class="form-section-title">Datos Laborales</div>
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Cargo *</label>
+                <input v-model="form.cargo" type="text" required placeholder="Analista" />
+              </div>
+              
+              <div class="form-group">
+                <label>Fecha de Ingreso *</label>
+                <input v-model="form.fecha_ingreso" type="date" required />
+              </div>
+              
+              <div class="form-group">
+                <label>Tipo de Contrato</label>
+                <select v-model="form.tipo_contrato">
+                  <option value="Indefinido">Indefinido</option>
+                  <option value="Plazo Fijo">Plazo Fijo</option>
+                  <option value="Temporal">Temporal</option>
+                  <option value="Practicas">Prácticas</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Estado</label>
+                <select v-model="form.estado">
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="Cesado">Cesado</option>
+                  <option value="Vacaciones">Vacaciones</option>
+                  <option value="Licencia">Licencia</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Sueldo Básico</label>
+                <input v-model="form.sueldo_basico" type="number" step="0.01" placeholder="2500.00" />
+              </div>
+              
+              <div class="form-group">
+                <label>Sistema de Pensiones</label>
+                <select v-model="form.sistema_pensiones">
+                  <option value="">Sin asignar</option>
+                  <option value="ONP">ONP</option>
+                  <option value="AFP Integra">AFP Integra</option>
+                  <option value="AFP Prima">AFP Prima</option>
+                  <option value="AFP Profuturo">AFP Profuturo</option>
+                  <option value="AFP Habitat">AFP Habitat</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Contacto de Emergencia -->
+            <div class="form-section-title">Contacto de Emergencia</div>
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nombre</label>
+                <input v-model="form.contacto_emergencia_nombre" type="text" placeholder="María García" />
+              </div>
+              
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input v-model="form.contacto_emergencia_telefono" type="tel" placeholder="999111222" />
+              </div>
+              
+              <div class="form-group">
+                <label>Parentesco</label>
+                <input v-model="form.contacto_emergencia_parentesco" type="text" placeholder="Esposa" />
+              </div>
+            </div>
+
+            <div class="form-group span-full">
+              <label>Observaciones</label>
+              <textarea v-model="form.observaciones" rows="3" placeholder="Notas adicionales..."></textarea>
+            </div>
+            
+            <!-- Actions -->
+            <div class="form-actions">
+              <button type="button" @click="closeModal" class="btn-secondary">Cancelar</button>
+              <button type="submit" :disabled="saving" class="btn-primary">
+                <span v-if="saving" class="spinner-small"></span>
+                {{ saving ? 'Guardando...' : (editingId ? 'Actualizar' : 'Registrar') }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -494,6 +662,7 @@ const filterEstado = ref('');
 const trabajadores = ref([]);
 const stats = ref({ total: 0, activos: 0, inactivos: 0 });
 const editingId = ref(null);
+const showModal = ref(false);
 const toast = ref({ show: false, message: '', type: 'success' });
 
 // Import state
@@ -637,7 +806,17 @@ async function loadStats() {
 function editTrabajador(t) {
   editingId.value = t.id;
   form.value = { ...t };
-  activeTab.value = 'create';
+  showModal.value = true;
+}
+
+function openCreateModal() {
+  resetForm();
+  showModal.value = true;
+}
+
+function closeModal() {
+  showModal.value = false;
+  resetForm();
 }
 
 async function saveTrabajador() {
@@ -662,7 +841,7 @@ async function saveTrabajador() {
     if (data.success) {
       showToast(data.message || 'Guardado exitosamente', 'success');
       resetForm();
-      activeTab.value = 'list';
+      showModal.value = false;
       await loadTrabajadores();
       await loadStats();
     } else {
