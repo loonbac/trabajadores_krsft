@@ -1,10 +1,10 @@
 {
     "name": "trabajadores_krsft",
-    "display_name": "Gestión de Trabajadores",
-    "version": "1.3.1",
+    "display_name": "Trabajadores",
+    "version": "1.3.2",
     "description": "Módulo para gestionar trabajadores del sistema",
     "icon": "users",
-    "gradient": "linear-gradient(135deg, #667eea, #764ba2)",
+    "gradient": "linear-gradient(135deg, #0AA4A4, #2F6FBF)",
     "author": "loonbac21",
     "enabled": true,
     "dependencies": []
