@@ -33,7 +33,6 @@
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
             </svg>
           </button>
-          <span class="module-count">{{ stats.total }} registrados</span>
         </div>
       </header>
 
@@ -47,15 +46,6 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
           Listado
-        </button>
-        <button 
-          :class="['tab-button', { 'tab-active': activeTab === 'create' }]"
-          @click="activeTab = 'create'; resetForm()"
-        >
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Nuevo Trabajador
         </button>
         <button 
           :class="['tab-button', { 'tab-active': activeTab === 'import' }]"
@@ -139,11 +129,11 @@
                 <option value="Licencia">Licencia</option>
               </select>
               
-              <button @click="loadTrabajadores" class="btn-refresh">
+              <button @click="activeTab = 'create'; resetForm()" class="btn-refresh">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                Actualizar
+                Nuevo Trabajador
               </button>
             </div>
           </div>
