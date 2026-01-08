@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulos_ERP\trabajadoreskrsft\Models;
+namespace Modulos_ERP\trabajadores_krsft\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
