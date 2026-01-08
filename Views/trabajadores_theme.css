@@ -1,34 +1,33 @@
 /* ============================================
    MÓDULO TRABAJADORES_KRSFT - TEMA DE COLORES
    Variables CSS específicas del módulo
+   Versión 1.3.0 - Tema Teal/Celeste
    ============================================ */
 
 :root {
-    /* Colores Primarios del Módulo */
-    --trabajadores-primary: #667eea;
-    --trabajadores-primary-dark: #5568d3;
-    --trabajadores-secondary: #764ba2;
-    --trabajadores-secondary-dark: #65408f;
-    --trabajadores-gradient: linear-gradient(135deg, #667eea, #764ba2);
-    --trabajadores-gradient-hover: linear-gradient(135deg, #5568d3, #65408f);
+    /* Colores Primarios del Módulo (Teal/Cyan - ERP Style) */
+    --trabajadores-primary: #0AA4A4;
+    --trabajadores-primary-dark: #087A7A;
+    --trabajadores-primary-light: #08C6B6;
+    --trabajadores-secondary: #2F6FBF;
+    --trabajadores-gradient: linear-gradient(135deg, #0AA4A4 0%, #08C6B6 50%, #2F6FBF 100%);
 
     /* Colores de Estado */
     --trabajadores-success: #10b981;
     --trabajadores-success-dark: #059669;
-    --trabajadores-success-gradient: linear-gradient(135deg, #10b981, #059669);
     --trabajadores-danger: #ef4444;
     --trabajadores-danger-dark: #dc2626;
     --trabajadores-warning: #f59e0b;
     --trabajadores-info: #8b5cf6;
 
-    /* Fondos */
-    --trabajadores-bg-page: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Fondos - Modo Claro */
+    --trabajadores-bg-page: linear-gradient(135deg, #0AA4A4 0%, #08C6B6 50%, #2F6FBF 100%);
     --trabajadores-bg-container: rgba(255, 255, 255, 0.95);
     --trabajadores-bg-card: #ffffff;
     --trabajadores-bg-light: #f8fafc;
-    --trabajadores-bg-input: #f8fafc;
+    --trabajadores-bg-input: #ffffff;
 
-    /* Textos */
+    /* Textos - Modo Claro */
     --trabajadores-text-dark: #1e293b;
     --trabajadores-text-gray: #64748b;
     --trabajadores-text-light: #94a3b8;
@@ -40,7 +39,7 @@
     --trabajadores-shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.08);
     --trabajadores-shadow-md: 0 8px 25px rgba(0, 0, 0, 0.12);
     --trabajadores-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.3);
-    --trabajadores-shadow-primary: 0 4px 12px rgba(102, 126, 234, 0.4);
+    --trabajadores-shadow-primary: 0 4px 12px rgba(10, 164, 164, 0.4);
 
     /* Badges - Activo */
     --trabajadores-badge-success-bg: rgba(16, 185, 129, 0.1);
@@ -71,16 +70,16 @@
     --trabajadores-btn-delete-text: #ef4444;
     --trabajadores-btn-delete-hover: rgba(239, 68, 68, 0.2);
 
-    /* Iconos de Stats */
-    --trabajadores-stat-total-bg: linear-gradient(135deg, #667eea, #764ba2);
-    --trabajadores-stat-active-bg: linear-gradient(135deg, #10b981, #059669);
-    --trabajadores-stat-inactive-bg: linear-gradient(135deg, #ef4444, #dc2626);
+    /* Iconos de Stats (Colores planos) */
+    --trabajadores-stat-total-bg: #0AA4A4;
+    --trabajadores-stat-active-bg: #10b981;
+    --trabajadores-stat-inactive-bg: #ef4444;
 
     /* Upload Area */
     --trabajadores-upload-border: #e2e8f0;
     --trabajadores-upload-bg: #f8fafc;
-    --trabajadores-upload-active-border: #667eea;
-    --trabajadores-upload-active-bg: rgba(102, 126, 234, 0.05);
+    --trabajadores-upload-active-border: #0AA4A4;
+    --trabajadores-upload-active-bg: rgba(10, 164, 164, 0.05);
 
     /* Toast */
     --trabajadores-toast-success: #10b981;
@@ -103,15 +102,29 @@
    MODO OSCURO
    ============================================ */
 body.dark-mode {
+    /* Fondos - Modo Oscuro */
+    --trabajadores-bg-page: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     --trabajadores-bg-container: rgba(30, 41, 59, 0.95);
     --trabajadores-bg-card: #1e293b;
     --trabajadores-bg-light: #334155;
     --trabajadores-bg-input: #1e293b;
 
+    /* Textos - Modo Oscuro */
     --trabajadores-text-dark: #f1f5f9;
     --trabajadores-text-gray: #cbd5e1;
     --trabajadores-text-light: #94a3b8;
+    --trabajadores-text-muted: #e2e8f0;
 
+    /* Bordes - Modo Oscuro */
     --trabajadores-border: #334155;
     --trabajadores-border-light: #1e293b;
+
+    /* Sombras - Modo Oscuro */
+    --trabajadores-shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.3);
+    --trabajadores-shadow-md: 0 8px 25px rgba(0, 0, 0, 0.4);
+    --trabajadores-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+    /* Upload - Modo Oscuro */
+    --trabajadores-upload-bg: #334155;
+    --trabajadores-upload-border: #475569;
 }
