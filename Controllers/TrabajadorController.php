@@ -192,13 +192,14 @@ class TrabajadorController extends Controller
     }
 
     /**
-     * Descargar plantilla para importación
+     * Descargar plantilla para importación (CSV con BOM para Excel)
      */
     public function downloadTemplate()
     {
         $headers = [
-            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="plantilla_trabajadores.csv"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
         ];
 
         $columns = [
@@ -216,9 +217,14 @@ class TrabajadorController extends Controller
 
         $callback = function() use ($columns) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
             
-            // Ejemplo
+            // UTF-8 BOM para que Excel lo lea correctamente
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Usar punto y coma como delimitador (mejor para Excel en español)
+            fputcsv($file, $columns, ';');
+            
+            // Fila de ejemplo
             fputcsv($file, [
                 '12345678', 
                 'Juan', 
@@ -230,7 +236,7 @@ class TrabajadorController extends Controller
                 'Activo', 
                 'juan@example.com', 
                 '999888777'
-            ]);
+            ], ';');
             
             fclose($file);
         };

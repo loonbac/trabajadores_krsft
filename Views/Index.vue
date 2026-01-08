@@ -706,7 +706,7 @@ async function downloadTemplate() {
     const moduleName = getModuleName();
     const response = await fetch(`/api/${moduleName}/excel/template`, {
       headers: {
-        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Accept': 'text/csv',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
       }
     });
@@ -717,7 +717,7 @@ async function downloadTemplate() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'plantilla_trabajadores.xlsx';
+    a.download = 'plantilla_trabajadores.csv';
     a.click();
     window.URL.revokeObjectURL(url);
     
