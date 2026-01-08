@@ -1,7 +1,7 @@
 {
     "name": "trabajadores_krsft",
     "display_name": "Trabajadores",
-    "version": "1.3.3",
+    "version": "2.3.3",
     "description": "Módulo para gestionar trabajadores del sistema",
     "icon": "users",
     "gradient": "linear-gradient(135deg, #0AA4A4, #2F6FBF)",
