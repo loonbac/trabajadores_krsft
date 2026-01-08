@@ -592,7 +592,7 @@ async function loadTrabajadores() {
     if (filterEstado.value) params.set('estado', filterEstado.value);
     if (searchQuery.value) params.set('search', searchQuery.value);
     
-    const response = await fetch(`/api/trabajadoreskrsft/list?${params}`, {
+    const response = await fetch(`/api/${getModuleName()}/list?${params}`, {
       headers: {
         'Accept': 'application/json',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
@@ -611,7 +611,7 @@ async function loadTrabajadores() {
 
 async function loadStats() {
   try {
-    const response = await fetch('/api/trabajadoreskrsft/stats', {
+    const response = await fetch(`/api/${getModuleName()}/stats`, {
       headers: {
         'Accept': 'application/json',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
@@ -636,8 +636,8 @@ async function saveTrabajador() {
   saving.value = true;
   try {
     const url = editingId.value 
-      ? `/api/trabajadoreskrsft/${editingId.value}`
-      : '/api/trabajadoreskrsft/create';
+      ? `/api/${getModuleName()}/${editingId.value}`
+      : `/api/${getModuleName()}/create`;
     
     const response = await fetch(url, {
       method: editingId.value ? 'PUT' : 'POST',
@@ -671,7 +671,7 @@ async function confirmDelete(t) {
   if (!confirm(`¿Estás seguro de eliminar a ${t.nombre_completo || t.nombres}?`)) return;
   
   try {
-    const response = await fetch(`/api/trabajadoreskrsft/${t.id}`, {
+    const response = await fetch(`/api/${getModuleName()}/${t.id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
