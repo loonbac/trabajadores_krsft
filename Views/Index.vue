@@ -408,7 +408,7 @@
                     <input
                       ref="fileInputRef"
                       type="file"
-                      accept=".csv,.txt"
+                      accept=".xlsx,.xls"
                       @change="handleFileSelect"
                       style="display: none;"
                     />
