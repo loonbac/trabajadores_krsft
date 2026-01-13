@@ -870,7 +870,7 @@
     align-items: center;
     gap: 8px;
     padding: 14px 28px;
-    background: var(--trabajadores-success-gradient);
+    background: #0AA4A4;
     color: white;
     border: none;
     border-radius: var(--trabajadores-radius-md);
@@ -881,8 +881,9 @@
 }
 
 .btn-import:hover:not(:disabled) {
+    background: #099393;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 12px rgba(10, 164, 164, 0.4);
 }
 
 .btn-import:disabled {
