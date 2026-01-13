@@ -893,7 +893,7 @@ async function downloadTemplate() {
     const moduleName = getModuleName();
     const response = await fetch(`/api/${moduleName}/excel/template`, {
       headers: {
-        'Accept': 'text/csv',
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
       }
     });
@@ -904,7 +904,7 @@ async function downloadTemplate() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'plantilla_trabajadores.csv';
+    a.download = 'plantilla_trabajadores.xlsx';
     a.click();
     window.URL.revokeObjectURL(url);
     
@@ -926,10 +926,10 @@ function handleFileSelect(event) {
 function handleDrop(event) {
   dragging.value = false;
   const file = event.dataTransfer.files[0];
-  if (file && (file.name.endsWith('.csv') || file.name.endsWith('.txt'))) {
+  if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
     selectedFile.value = file;
   } else {
-    showToast('Por favor selecciona un archivo .csv', 'error');
+    showToast('Por favor selecciona un archivo Excel (.xlsx)', 'error');
   }
 }
 
