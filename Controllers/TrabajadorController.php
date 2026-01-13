@@ -31,6 +31,10 @@ class TrabajadorController extends Controller
             $query->where('estado', $request->estado);
         }
 
+        if ($request->filled('cargo')) {
+            $query->where('cargo', $request->cargo);
+        }
+
         if ($request->filled('area_id')) {
             $query->where('area_id', $request->area_id);
         }
