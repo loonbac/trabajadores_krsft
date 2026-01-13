@@ -373,6 +373,7 @@ class TrabajadorController extends Controller
                     $nombreCompleto = $row[$headerMap['nombre_completo'] ?? 0] ?? null;
                     $dni = $row[$headerMap['dni'] ?? 1] ?? null;
                     $cargo = $row[$headerMap['cargo'] ?? 2] ?? null;
+                    $cargo = !empty($cargo) ? trim($cargo) : null; // Allow empty CARGO
                     $estado = $row[$headerMap['estado'] ?? 3] ?? 'Activo';
                     
                     if (empty($dni) || empty($nombreCompleto)) {
