@@ -192,56 +192,83 @@ class TrabajadorController extends Controller
     }
 
     /**
-     * Descargar plantilla para importación (CSV con BOM para Excel)
+     * Descargar plantilla para importación (XLSX real)
      */
     public function downloadTemplate()
     {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Plantilla Trabajadores');
+
+        // Headers - Las 4 columnas solicitadas
         $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="plantilla_trabajadores.csv"',
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'A1' => 'APELLIDOS Y NOMBRES',
+            'B1' => 'DNI',
+            'C1' => 'CARGO',
+            'D1' => 'ESTADO'
         ];
 
-        $columns = [
-            'DNI', 
-            'Nombres', 
-            'Apellido Paterno', 
-            'Apellido Materno', 
-            'Fecha Nacimiento (YYYY-MM-DD)', 
-            'Cargo', 
-            'Fecha Ingreso (YYYY-MM-DD)', 
-            'Estado',
-            'Email',
-            'Telefono'
+        foreach ($headers as $cell => $value) {
+            $sheet->setCellValue($cell, $value);
+        }
+
+        // Estilo para headers
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '667EEA'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
         ];
+        $sheet->getStyle('A1:D1')->applyFromArray($headerStyle);
 
-        $callback = function() use ($columns) {
-            $file = fopen('php://output', 'w');
-            
-            // UTF-8 BOM para que Excel lo lea correctamente
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
-            // Usar punto y coma como delimitador (mejor para Excel en español)
-            fputcsv($file, $columns, ';');
-            
-            // Fila de ejemplo
-            fputcsv($file, [
-                '12345678', 
-                'Juan', 
-                'Perez', 
-                'Gomez', 
-                '1990-01-01', 
-                'Asistente', 
-                date('Y-m-d'), 
-                'Activo', 
-                'juan@example.com', 
-                '999888777'
-            ], ';');
-            
-            fclose($file);
-        };
+        // Fila de ejemplo
+        $sheet->setCellValue('A2', 'PEREZ GARCIA, JUAN CARLOS');
+        $sheet->setCellValue('B2', '12345678');
+        $sheet->setCellValue('C2', 'Analista de Sistemas');
+        $sheet->setCellValue('D2', 'Activo');
 
-        return response()->stream($callback, 200, $headers);
+        // Fila de ejemplo 2 (cesado)
+        $sheet->setCellValue('A3', 'LOPEZ RODRIGUEZ, MARIA');
+        $sheet->setCellValue('B3', '87654321');
+        $sheet->setCellValue('C3', 'Asistente Administrativo');
+        $sheet->setCellValue('D3', 'Cesado');
+
+        // Validación de datos para columna ESTADO
+        $validation = $sheet->getCell('D4')->getDataValidation();
+        $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
+        $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+        $validation->setAllowBlank(false);
+        $validation->setShowDropDown(true);
+        $validation->setFormula1('"Activo,Cesado"');
+        
+        // Aplicar validación a toda la columna D (filas 2-1000)
+        for ($row = 2; $row <= 100; $row++) {
+            $sheet->getCell("D{$row}")->setDataValidation(clone $validation);
+        }
+
+        // Ajustar ancho de columnas
+        $sheet->getColumnDimension('A')->setWidth(35);
+        $sheet->getColumnDimension('B')->setWidth(12);
+        $sheet->getColumnDimension('C')->setWidth(30);
+        $sheet->getColumnDimension('D')->setWidth(12);
+
+        // Crear archivo XLSX
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        
+        $filename = 'plantilla_trabajadores.xlsx';
+        $tempFile = tempnam(sys_get_temp_dir(), 'xlsx');
+        $writer->save($tempFile);
+
+        return response()->download($tempFile, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
     }
 
     /**
@@ -296,100 +323,143 @@ class TrabajadorController extends Controller
     }
 
     /**
-     * Importar trabajadores desde Excel (CSV)
+     * Importar trabajadores desde Excel (XLSX)
      */
     public function importExcel(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:csv,txt,xlsx,xls'
+            'file' => 'required|file|mimes:xlsx,xls'
         ]);
 
         $file = $request->file('file');
         $path = $file->getRealPath();
         
-        // Simple CSV parsing
-        $data = array_map('str_getcsv', file($path));
-        $header = array_shift($data); // Remove header
-        
-        // Map header indices
-        $headerMap = [];
-        foreach ($header as $index => $col) {
-            $col = strtolower(trim($col));
-            if (str_contains($col, 'dni')) $headerMap['dni'] = $index;
-            elseif (str_contains($col, 'nombres')) $headerMap['nombres'] = $index;
-            elseif (str_contains($col, 'paterno')) $headerMap['paterno'] = $index;
-            elseif (str_contains($col, 'materno')) $headerMap['materno'] = $index;
-            elseif (str_contains($col, 'nacimiento')) $headerMap['nacimiento'] = $index;
-            elseif (str_contains($col, 'cargo')) $headerMap['cargo'] = $index;
-            elseif (str_contains($col, 'ingreso')) $headerMap['ingreso'] = $index;
-            elseif (str_contains($col, 'estado')) $headerMap['estado'] = $index;
-            elseif (str_contains($col, 'email')) $headerMap['email'] = $index;
-            elseif (str_contains($col, 'telefono')) $headerMap['telefono'] = $index;
-        }
-
-        $imported = 0;
-        $errors = [];
-        $rowNum = 2; // Start after header
-
-        foreach ($data as $row) {
-            // Skip empty rows
-            if (count($row) < 3) {
-                $rowNum++;
-                continue;
-            }
-
-            try {
-                // Get values using map or fallback to default indices
-                $dni = $row[$headerMap['dni'] ?? 0] ?? null;
-                $nombres = $row[$headerMap['nombres'] ?? 1] ?? null;
-                $paterno = $row[$headerMap['paterno'] ?? 2] ?? null;
-                $materno = $row[$headerMap['materno'] ?? 3] ?? '';
-                
-                if (empty($dni) || empty($nombres) || empty($paterno)) {
-                    throw new \Exception('Datos incompletos (DNI, Nombre o Apellido)');
-                }
-
-                // Check duplicate
-                if (DB::table($this->table)->where('dni', $dni)->exists()) {
-                    throw new \Exception('DNI ya existe');
-                }
-
-                $nombreCompleto = trim("$paterno $materno, $nombres");
-                
-                DB::table($this->table)->insert([
-                    'dni' => $dni,
-                    'nombres' => $nombres,
-                    'apellido_paterno' => $paterno,
-                    'apellido_materno' => $materno,
-                    'nombre_completo' => $nombreCompleto,
-                    'fecha_nacimiento' => $row[$headerMap['nacimiento'] ?? 4] ?? null,
-                    'cargo' => $row[$headerMap['cargo'] ?? 5] ?? null,
-                    'fecha_ingreso' => $row[$headerMap['ingreso'] ?? 6] ?? now(),
-                    'estado' => $row[$headerMap['estado'] ?? 7] ?? 'Activo',
-                    'email' => $row[$headerMap['email'] ?? 8] ?? null,
-                    'telefono' => $row[$headerMap['telefono'] ?? 9] ?? null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-                $imported++;
-
-            } catch (\Exception $e) {
-                $errors[] = [
-                    'row' => $rowNum,
-                    'dni' => $dni ?? '---',
-                    'error' => $e->getMessage()
-                ];
-            }
+        try {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($path);
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray();
             
-            $rowNum++;
-        }
+            // Remove header row
+            $header = array_shift($data);
+            
+            // Map headers to indices (flexible matching)
+            $headerMap = [];
+            foreach ($header as $index => $col) {
+                $col = strtolower(trim($col ?? ''));
+                if (str_contains($col, 'apellidos') || str_contains($col, 'nombre')) {
+                    $headerMap['nombre_completo'] = $index;
+                } elseif (str_contains($col, 'dni')) {
+                    $headerMap['dni'] = $index;
+                } elseif (str_contains($col, 'cargo')) {
+                    $headerMap['cargo'] = $index;
+                } elseif (str_contains($col, 'estado')) {
+                    $headerMap['estado'] = $index;
+                }
+            }
 
-        return response()->json([
-            'success' => true,
-            'total' => count($data),
-            'imported' => $imported,
-            'errors' => $errors
-        ]);
+            $imported = 0;
+            $errors = [];
+            $rowNum = 2; // Start after header
+
+            foreach ($data as $row) {
+                // Skip empty rows
+                if (empty(array_filter($row))) {
+                    $rowNum++;
+                    continue;
+                }
+
+                try {
+                    // Get values using map with fallback
+                    $nombreCompleto = $row[$headerMap['nombre_completo'] ?? 0] ?? null;
+                    $dni = $row[$headerMap['dni'] ?? 1] ?? null;
+                    $cargo = $row[$headerMap['cargo'] ?? 2] ?? null;
+                    $estado = $row[$headerMap['estado'] ?? 3] ?? 'Activo';
+                    
+                    if (empty($dni) || empty($nombreCompleto)) {
+                        throw new \Exception('Datos incompletos (DNI o Nombre)');
+                    }
+
+                    // Parse nombre_completo to extract apellidos y nombres
+                    // Format expected: "APELLIDO_PATERNO APELLIDO_MATERNO, NOMBRES"
+                    $nombres = '';
+                    $apellidoPaterno = '';
+                    $apellidoMaterno = '';
+                    
+                    if (str_contains($nombreCompleto, ',')) {
+                        $parts = explode(',', $nombreCompleto);
+                        $apellidos = trim($parts[0] ?? '');
+                        $nombres = trim($parts[1] ?? '');
+                        
+                        $apellidoParts = explode(' ', $apellidos);
+                        $apellidoPaterno = $apellidoParts[0] ?? '';
+                        $apellidoMaterno = $apellidoParts[1] ?? '';
+                    } else {
+                        // If no comma, treat as full name
+                        $nombreCompleto = trim($nombreCompleto);
+                        $parts = explode(' ', $nombreCompleto);
+                        if (count($parts) >= 3) {
+                            $apellidoPaterno = $parts[0] ?? '';
+                            $apellidoMaterno = $parts[1] ?? '';
+                            $nombres = implode(' ', array_slice($parts, 2));
+                        } else {
+                            $apellidoPaterno = $parts[0] ?? '';
+                            $nombres = implode(' ', array_slice($parts, 1));
+                        }
+                    }
+
+                    // Check duplicate DNI
+                    if (DB::table($this->table)->where('dni', $dni)->exists()) {
+                        throw new \Exception('DNI ya existe');
+                    }
+
+                    // Normalize estado
+                    $estadoNormalizado = strtolower(trim($estado));
+                    if (str_contains($estadoNormalizado, 'activo')) {
+                        $estado = 'Activo';
+                    } elseif (str_contains($estadoNormalizado, 'cesado') || str_contains($estadoNormalizado, 'inactivo')) {
+                        $estado = 'Cesado';
+                    } else {
+                        $estado = 'Activo';
+                    }
+                    
+                    DB::table($this->table)->insert([
+                        'dni' => $dni,
+                        'nombres' => $nombres,
+                        'apellido_paterno' => $apellidoPaterno,
+                        'apellido_materno' => $apellidoMaterno,
+                        'nombre_completo' => $nombreCompleto,
+                        'cargo' => $cargo,
+                        'estado' => $estado,
+                        'fecha_ingreso' => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    $imported++;
+
+                } catch (\Exception $e) {
+                    $errors[] = [
+                        'row' => $rowNum,
+                        'dni' => $dni ?? '---',
+                        'error' => $e->getMessage()
+                    ];
+                }
+                
+                $rowNum++;
+            }
+
+            return response()->json([
+                'success' => true,
+                'total' => count($data),
+                'imported' => $imported,
+                'errors' => $errors
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al leer el archivo: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
