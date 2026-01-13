@@ -120,13 +120,9 @@
                 />
               </div>
               
-              <select v-model="filterEstado" @change="loadTrabajadores" class="filter-select">
-                <option value="">Todos los estados</option>
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-                <option value="Cesado">Cesado</option>
-                <option value="Vacaciones">Vacaciones</option>
-                <option value="Licencia">Licencia</option>
+              <select v-model="filterCargo" @change="loadTrabajadores" class="filter-select">
+                <option value="">Todos los cargos</option>
+                <option v-for="cargo in uniqueCargos" :key="cargo" :value="cargo">{{ cargo }}</option>
               </select>
               
               <button @click="openCreateModal" class="btn-refresh">
@@ -658,10 +654,18 @@ const activeTab = ref('list');
 const loading = ref(false);
 const saving = ref(false);
 const searchQuery = ref('');
-const filterEstado = ref('');
+const filterCargo = ref('');
 const trabajadores = ref([]);
 const stats = ref({ total: 0, activos: 0, inactivos: 0 });
 const editingId = ref(null);
+
+// Computed: unique cargos from all workers
+const uniqueCargos = computed(() => {
+  const cargos = trabajadores.value
+    .map(t => t.cargo)
+    .filter(c => c && c.trim() !== '');
+  return [...new Set(cargos)].sort();
+});
 const showModal = ref(false);
 const toast = ref({ show: false, message: '', type: 'success' });
 
@@ -766,7 +770,7 @@ async function loadTrabajadores() {
   loading.value = true;
   try {
     const params = new URLSearchParams();
-    if (filterEstado.value) params.set('estado', filterEstado.value);
+    if (filterCargo.value) params.set('cargo', filterCargo.value);
     if (searchQuery.value) params.set('search', searchQuery.value);
     
     const response = await fetch(`/api/${getModuleName()}/list?${params}`, {
