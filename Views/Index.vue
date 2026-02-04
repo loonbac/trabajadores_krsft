@@ -645,9 +645,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import './trabajadores_theme.css';
 import './trabajadores.css';
+
+// Polling interval para tiempo real
+let pollingInterval = null;
+const POLLING_INTERVAL_MS = 5000; // 5 segundos
 
 // State
 const activeTab = ref('list');
@@ -995,6 +999,20 @@ onMounted(() => {
   }
   loadTrabajadores();
   loadStats();
+  
+  // Iniciar polling para tiempo real
+  pollingInterval = setInterval(() => {
+    loadTrabajadores();
+    loadStats();
+  }, POLLING_INTERVAL_MS);
+});
+
+onUnmounted(() => {
+  // Limpiar polling al salir del componente
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
 });
 </script>
 
