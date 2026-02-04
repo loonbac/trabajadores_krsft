@@ -1,8 +1,8 @@
 {
     "name": "TrabajadoresKrsft",
     "slug": "trabajadores_krsft",
-    "display_name": "Trabajadores",
-    "version": "2.6.0",
+    "display_name": "TRABAJADORES",
+    "version": "2.6.3",
     "description": "Módulo para gestionar trabajadores del sistema. Actualización en tiempo real con caché localStorage para carga instantánea.",
     "icon": "icon.svg",
     "color": "#fb923c",
