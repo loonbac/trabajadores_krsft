@@ -651,7 +651,10 @@ import './trabajadores.css';
 
 // Polling interval para tiempo real
 let pollingInterval = null;
-const POLLING_INTERVAL_MS = 5000; // 5 segundos
+const POLLING_INTERVAL_MS = 3000; // 3 segundos
+
+// Helper para comparar arrays y evitar re-renders innecesarios
+const arraysEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 // State
 const activeTab = ref('list');
@@ -770,8 +773,8 @@ function getBadgeClass(estado) {
   return classes[estado] || 'badge-default';
 }
 
-async function loadTrabajadores() {
-  loading.value = true;
+async function loadTrabajadores(showLoading = false) {
+  if (showLoading) loading.value = true;
   try {
     const params = new URLSearchParams();
     if (filterCargo.value) params.set('cargo', filterCargo.value);
@@ -785,13 +788,17 @@ async function loadTrabajadores() {
     });
     const data = await response.json();
     if (data.success) {
-      trabajadores.value = data.trabajadores || [];
+      const newTrabajadores = data.trabajadores || [];
+      // Solo actualizar si hay cambios reales
+      if (!arraysEqual(trabajadores.value, newTrabajadores)) {
+        trabajadores.value = newTrabajadores;
+      }
     }
   } catch (e) {
     console.error('Error:', e);
-    showToast('Error al cargar trabajadores', 'error');
+    if (showLoading) showToast('Error al cargar trabajadores', 'error');
   }
-  loading.value = false;
+  if (showLoading) loading.value = false;
 }
 
 async function loadStats() {
@@ -803,7 +810,7 @@ async function loadStats() {
       }
     });
     const data = await response.json();
-    if (data.success) {
+    if (data.success && JSON.stringify(stats.value) !== JSON.stringify(data.stats)) {
       stats.value = data.stats;
     }
   } catch (e) {
@@ -997,10 +1004,10 @@ onMounted(() => {
   if (localStorage.getItem('trabajadores-dark-mode') === 'true') {
     document.body.classList.add('dark-mode');
   }
-  loadTrabajadores();
+  loadTrabajadores(true);
   loadStats();
   
-  // Iniciar polling para tiempo real
+  // Iniciar polling para tiempo real (sin loading spinner)
   pollingInterval = setInterval(() => {
     loadTrabajadores();
     loadStats();
