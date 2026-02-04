@@ -2,7 +2,7 @@
     "name": "TrabajadoresKrsft",
     "slug": "trabajadores_krsft",
     "display_name": "Trabajadores",
-    "version": "2.5.0",
+    "version": "2.5.1",
     "description": "Módulo para gestionar trabajadores del sistema. Actualización en tiempo real cada 5 segundos.",
     "icon": "icon.svg",
     "color": "#fb923c",
