@@ -1,10 +1,6 @@
 <?php
 
-// The folder name determines the namespace dynamically
-// Example: If folder is "trabajadores_krsft", namespace becomes:
-// Modulos_ERP\trabajadores_krsft\Controllers
-
-namespace Modulos_ERP\trabajadores_krsft\Controllers;
+namespace Modulos_ERP\TrabajadoresKrsft\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
