@@ -656,6 +656,45 @@ const POLLING_INTERVAL_MS = 3000; // 3 segundos
 // Helper para comparar arrays y evitar re-renders innecesarios
 const arraysEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
+// Sistema de caché con localStorage
+const CACHE_PREFIX = 'trabajadores_cache_';
+
+const saveToCache = (key, data) => {
+  try {
+    localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+  } catch (e) {
+    console.warn('Error saving to cache:', e);
+  }
+};
+
+const loadFromCache = (key) => {
+  try {
+    const cached = localStorage.getItem(CACHE_PREFIX + key);
+    if (cached) {
+      const { data } = JSON.parse(cached);
+      return data;
+    }
+  } catch (e) {
+    console.warn('Error loading from cache:', e);
+  }
+  return null;
+};
+
+const initFromCache = () => {
+  const cachedTrabajadores = loadFromCache('trabajadores');
+  if (cachedTrabajadores) {
+    trabajadores.value = cachedTrabajadores;
+  }
+  
+  const cachedStats = loadFromCache('stats');
+  if (cachedStats) {
+    stats.value = cachedStats;
+  }
+};
+
 // State
 const activeTab = ref('list');
 const loading = ref(false);
@@ -792,6 +831,10 @@ async function loadTrabajadores(showLoading = false) {
       // Solo actualizar si hay cambios reales
       if (!arraysEqual(trabajadores.value, newTrabajadores)) {
         trabajadores.value = newTrabajadores;
+        // Guardar en caché solo si no hay filtros activos
+        if (!filterCargo.value && !searchQuery.value) {
+          saveToCache('trabajadores', newTrabajadores);
+        }
       }
     }
   } catch (e) {
@@ -812,6 +855,7 @@ async function loadStats() {
     const data = await response.json();
     if (data.success && JSON.stringify(stats.value) !== JSON.stringify(data.stats)) {
       stats.value = data.stats;
+      saveToCache('stats', data.stats);
     }
   } catch (e) {
     console.error('Error loading stats:', e);
@@ -1004,7 +1048,13 @@ onMounted(() => {
   if (localStorage.getItem('trabajadores-dark-mode') === 'true') {
     document.body.classList.add('dark-mode');
   }
-  loadTrabajadores(true);
+  
+  // Cargar datos desde caché primero para mostrar instantáneamente
+  initFromCache();
+  
+  // Luego cargar datos frescos del servidor (sin loading si hay caché)
+  const hasCache = trabajadores.value.length > 0;
+  loadTrabajadores(!hasCache);
   loadStats();
   
   // Iniciar polling para tiempo real (sin loading spinner)
