@@ -1,0 +1,72 @@
+/* ============================================
+   TRABAJADORES - MODAL (floating form modal)
+   Core deps: Bytewave-theme.css, modules-modal.css
+   ============================================ */
+
+.modal-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    animation: slideIn 0.3s ease;
+}
+
+.modal-close {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 40px;
+    height: 40px;
+    background: var(--color-danger);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.modal-close:hover {
+    transform: scale(1.1);
+    background: var(--color-danger-dark);
+}
+
+.modal-close svg { width: 20px; height: 20px; }
+
+.modal-form-card {
+    background: var(--bg-container-solid);
+    border-radius: var(--radius-xl);
+    padding: 30px 40px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+body.dark-mode .modal-form-card {
+    background: var(--bg-white);
+}
+
+.modal-form-card h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 8px 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .modal-container { max-width: 100%; }
+
+    .modal-form-card { padding: 20px; }
+
+    .modal-close {
+        top: -8px;
+        right: -8px;
+        width: 36px;
+        height: 36px;
+    }
+}

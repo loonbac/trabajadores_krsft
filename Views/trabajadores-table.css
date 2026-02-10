@@ -1,0 +1,162 @@
+/* ============================================
+   TRABAJADORES - TABLE, FILTERS, BADGES
+   Core deps: Bytewave-theme.css, users-table.css
+   ============================================ */
+
+/* ── Stat icon colors (module-specific) ── */
+.stat-active .stat-icon { background: var(--color-success); }
+.stat-inactive .stat-icon { background: var(--color-danger); }
+
+/* ── Filters ── */
+.filters-container {
+    background: var(--bg-container-solid);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+}
+
+body.dark-mode .filters-container {
+    background: var(--bg-white);
+}
+
+.filters-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    min-width: 180px;
+    cursor: pointer;
+    background: var(--input-solid-bg);
+    color: var(--text-dark);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.btn-new-worker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--color-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-new-worker:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary);
+}
+
+.btn-new-worker svg { width: 18px; height: 18px; }
+
+/* ── Table ── */
+.table-container {
+    background: var(--bg-container-solid);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+body.dark-mode .table-container {
+    background: var(--bg-white);
+}
+
+.data-table { width: 100%; border-collapse: collapse; }
+
+.data-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--table-header-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--table-header-bg);
+    border-bottom: 1px solid var(--table-border);
+}
+
+.data-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 14px;
+    color: var(--table-text);
+}
+
+.data-table tr:hover { background: var(--table-row-hover); }
+.text-right { text-align: right; }
+
+/* ── Worker info cell ── */
+.worker-info { display: flex; align-items: center; gap: 12px; }
+.worker-name { font-weight: 600; color: var(--text-dark); }
+.worker-email { font-size: 13px; color: var(--text-light); }
+.mono { font-family: monospace; }
+
+/* ── Badges ── */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-success { background: var(--badge-success-bg); color: var(--badge-success-text); }
+.badge-danger  { background: var(--badge-danger-bg);  color: var(--badge-danger-text); }
+.badge-warning { background: var(--badge-warning-bg); color: var(--badge-warning-text); }
+.badge-info    { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.badge-default { background: var(--badge-default-bg); color: var(--badge-default-text); }
+
+/* ── Loading / Empty states ── */
+.loading-state,
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+}
+
+.loading-state svg,
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-select { min-width: auto; }
+}
