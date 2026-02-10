@@ -5,6 +5,7 @@ namespace Modulos_ERP\TrabajadoresKrsft\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class TrabajadorController extends Controller
@@ -36,7 +37,7 @@ class TrabajadorController extends Controller
         }
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('dni', 'like', "%{$search}%")
                   ->orWhere('nombre_completo', 'like', "%{$search}%")
@@ -125,9 +126,10 @@ class TrabajadorController extends Controller
                 'trabajador_id' => $id
             ]);
         } catch (\Exception $e) {
+            Log::error('Error en store trabajador', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
+                'message' => 'Error interno al crear trabajador'
             ], 500);
         }
     }
@@ -141,7 +143,18 @@ class TrabajadorController extends Controller
         }
 
         try {
-            $data = $request->except(['_token', '_method']);
+            $data = $request->only([
+                'dni', 'nombres', 'apellido_paterno', 'apellido_materno',
+                'fecha_nacimiento', 'lugar_nacimiento', 'genero', 'estado_civil',
+                'sistema_pensiones', 'telefono', 'email', 'direccion',
+                'distrito', 'provincia', 'departamento', 'area_id', 'cargo',
+                'fecha_ingreso', 'fecha_cese', 'tipo_contrato', 'estado',
+                'sueldo_basico', 'banco', 'numero_cuenta',
+                'tiene_antecedentes_penales', 'tiene_antecedentes_policiales',
+                'tiene_sctr', 'tiene_epsrc',
+                'contacto_emergencia_nombre', 'contacto_emergencia_telefono',
+                'contacto_emergencia_parentesco', 'observaciones'
+            ]);
             $data['nombre_completo'] = trim(
                 ($request->apellido_paterno ?? '') . ' ' .
                 ($request->apellido_materno ?? '') . ', ' .
@@ -156,9 +169,10 @@ class TrabajadorController extends Controller
                 'message' => 'Trabajador actualizado exitosamente'
             ]);
         } catch (\Exception $e) {
+            Log::error('Error en update trabajador', ['error' => $e->getMessage(), 'id' => $id]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
+                'message' => 'Error interno al actualizar trabajador'
             ], 500);
         }
     }
@@ -175,7 +189,8 @@ class TrabajadorController extends Controller
             DB::table($this->table)->where('id', $id)->delete();
             return response()->json(['success' => true, 'message' => 'Trabajador eliminado exitosamente']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+            Log::error('Error en destroy trabajador', ['error' => $e->getMessage(), 'id' => $id]);
+            return response()->json(['success' => false, 'message' => 'Error interno al eliminar trabajador'], 500);
         }
     }
 
@@ -457,9 +472,10 @@ class TrabajadorController extends Controller
             ]);
             
         } catch (\Exception $e) {
+            Log::error('Error al importar trabajadores', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error al leer el archivo: ' . $e->getMessage()
+                'message' => 'Error interno al leer el archivo'
             ], 500);
         }
     }
