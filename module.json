@@ -1,9 +1,10 @@
+```json
 {
     "name": "TrabajadoresKrsft",
     "slug": "trabajadores_krsft",
     "display_name": "TRABAJADORES",
-    "version": "2.7.4",
-    "description": "Módulo para gestionar trabajadores del sistema. v2.6.4: Fix audit issues",
+    "version": "3.0.0",
+    "description": "Módulo de gestión de trabajadores con interfaz Premium (v3 UI Refactor)",
     "icon": "icon.svg",
     "color": "#fb923c",
     "gradient": "linear-gradient(135deg, #0AA4A4, #2F6FBF)",
