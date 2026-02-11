@@ -64,8 +64,9 @@ body.dark-mode .modal-form-card {
     padding: 24px 40px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    text-align: center;
     background: white;
 }
 
@@ -80,45 +81,14 @@ body.dark-mode .modal-header {
     margin: 0 !important;
 }
 
+.modal-header .form-subtitle {
+    margin: 4px 0 0 0 !important;
+}
+
 .modal-body {
     padding: 30px 40px;
     overflow-y: auto;
     flex: 1;
-}
-
-/* The original .modal-close rule is above, this is the new one that will be used inside .modal-header */
-/* This rule is intentionally placed here to override the global .modal-close when it's inside a header context */
-.modal-header .modal-close {
-    position: relative;
-    /* Change to relative within header */
-    width: 32px;
-    height: 32px;
-    background: #ef4444;
-    color: white;
-    border: 1px solid #dc2626;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-    top: auto;
-    /* Reset top */
-    right: auto;
-    /* Reset right */
-    z-index: auto;
-    /* Reset z-index */
-}
-
-.modal-header .modal-close:hover {
-    background: #dc2626;
-    transform: scale(1.05);
-}
-
-.modal-header .modal-close svg {
-    width: 20px;
-    height: 20px;
 }
 
 /* ── Responsive ── */

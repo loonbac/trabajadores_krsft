@@ -625,13 +625,8 @@ export default function TrabajadoresIndex() {
           <div className="modal-container">
             <div className="modal-form-card">
               <div className="modal-header">
-                <div className="header-content">
-                  <h2>{editingId ? 'Editar Trabajador' : 'Nuevo Trabajador'}</h2>
-                  <p className="form-subtitle">Complete los campos requeridos (*) para registrar al trabajador.</p>
-                </div>
-                <button onClick={closeModal} className="modal-close" title="Cerrar">
-                  {CloseIcon}
-                </button>
+                <h2>{editingId ? 'Editar Trabajador' : 'Nuevo Trabajador'}</h2>
+                <p className="form-subtitle">Complete los campos requeridos (*) para registrar al trabajador.</p>
               </div>
 
               <div className="modal-body">
@@ -770,7 +765,8 @@ export default function TrabajadoresIndex() {
               </div>
             </div>
           </div>
-      ) : null}
         </div>
-      );
+      ) : null}
+    </div>
+  );
 }
