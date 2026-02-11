@@ -8,7 +8,7 @@
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    overflow: hidden !important;
 }
 
 /* Animated gradient background */
@@ -42,7 +42,7 @@ body.dark-mode .trabajadores-bg {
     display: flex;
     flex-direction: column;
     z-index: 10;
-    overflow: hidden;
+    overflow: hidden !important;
     box-shadow: var(--shadow-lg);
 }
 
@@ -112,6 +112,43 @@ svg {
 
 .stat-card.stat-updates .stat-icon {
     background: var(--color-danger);
+}
+
+/* ── Stats Adjustments (Clean Look) ── */
+.stat-card {
+    box-shadow: none !important;
+    border: 1px solid var(--border-color);
+}
+
+.stat-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ── Custom Buttons (Teal) ── */
+.btn-back,
+.btn-new-worker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background-color: #0AA4A4;
+    /* Teal from screenshot */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(10, 164, 164, 0.2);
+}
+
+.btn-back:hover,
+.btn-new-worker:hover {
+    background-color: #088F8F;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(10, 164, 164, 0.3);
 }
 
 /* ── Responsive ── */
