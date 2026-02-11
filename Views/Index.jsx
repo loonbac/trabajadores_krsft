@@ -13,6 +13,13 @@ import './trabajadores-form.css';
 import './trabajadores-import.css';
 import './trabajadores-modal.css';
 
+// ── Components ──
+import {
+  BackIcon, SunIcon, MoonIcon, ListIcon, UploadIcon,
+  SearchIcon, PlusIcon, TeamIcon, StatUsersIcon
+} from './components/Icons';
+import TrabajadoresTable from './components/TrabajadoresTable';
+
 // ── Constants ──
 const POLLING_INTERVAL_MS = 3000;
 const CACHE_PREFIX = 'trabajadores_cache_';
@@ -383,39 +390,41 @@ export default function TrabajadoresIndex() {
         {/* Header — reuses .module-header, .header-left, .btn-back from core */}
         <header className="module-header">
           <div className="header-left">
-            <button onClick={goBack} className="btn-back">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Volver
+            <button onClick={() => window.history.back()} className="back-btn" title="Volver">
+              {BackIcon}
             </button>
-            <h1>
-              <svg className="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/>
-              </svg>
-              GESTIÓN DE TRABAJADORES
-            </h1>
+            <div className="module-title">
+              <div className="title-icon-wrapper">
+                {StatUsersIcon}
+              </div>
+              <div>
+                <h1>Gestión de Trabajadores</h1>
+                <p className="module-subtitle">Administre el personal y la información laboral</p>
+              </div>
+            </div>
           </div>
           <div className="header-right">
-            <button onClick={toggleDarkMode} className="theme-toggle" title="Cambiar tema">
-              <svg className="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-              </svg>
-              <svg className="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
+            <button onClick={() => {/* toggle dark mode logic is usually handled by platform, but we have theme-toggle classes */ document.body.classList.toggle('dark-mode') }} className="theme-toggle" title="Cambiar tema">
+              {SunIcon}
+              {MoonIcon}
             </button>
           </div>
         </header>
 
         {/* Tabs — reuses .tabs-container, .tab-button from core */}
-        <div className="tabs-container">
-          <button className={`tab-button${activeTab === 'list' ? ' tab-active' : ''}`} onClick={() => setActiveTab('list')}>
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <div className="tabs-nav">
+          <button
+            onClick={() => setActiveTab('list')}
+            className={`tab-btn${activeTab === 'list' ? ' is-active' : ''}`}
+          >
+            {ListIcon}
             Listado
           </button>
-          <button className={`tab-button${activeTab === 'import' ? ' tab-active' : ''}`} onClick={() => setActiveTab('import')}>
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          <button
+            onClick={() => setActiveTab('import')}
+            className={`tab-btn${activeTab === 'import' ? ' is-active' : ''}`}
+          >
+            {UploadIcon}
             Importar Excel
           </button>
         </div>
@@ -426,51 +435,59 @@ export default function TrabajadoresIndex() {
           <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
             {/* Stats Cards — reuses .stats-grid, .stat-card, .stat-icon from core */}
             <div className="stats-grid">
-              <div className="stat-card stat-total">
-                <div className="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m7-10a4 4 0 100-8 4 4 0 000 8zm8 10v-2a4 4 0 00-3-3.87m3.87 0a4 4 0 100-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div className="stat-card">
+                <div className="stat-icon-bg">
+                  {StatUsersIcon}
                 </div>
-                <div className="stat-content">
-                  <h3>TOTAL TRABAJADORES</h3>
-                  <p className="stat-number">{stats.total}</p>
-                  <p className="stat-subtitle">Registrados en el sistema</p>
-                </div>
+                <div className="stat-value">{stats.total}</div>
+                <div className="stat-label">Total Personal</div>
               </div>
               <div className="stat-card stat-active">
-                <div className="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <div className="stat-icon-bg">
+                  {CheckCircleIcon}
                 </div>
-                <div className="stat-content">
-                  <h3>ACTIVOS</h3>
-                  <p className="stat-number">{stats.activos}</p>
-                  <p className="stat-subtitle">En planilla activa</p>
-                </div>
+                <div className="stat-value">{stats.activos}</div>
+                <div className="stat-label">Personal Activo</div>
               </div>
               <div className="stat-card stat-inactive">
-                <div className="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none"><path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <div className="stat-icon-bg">
+                  {XCircleIcon}
                 </div>
-                <div className="stat-content">
-                  <h3>INACTIVOS</h3>
-                  <p className="stat-number">{stats.inactivos}</p>
-                  <p className="stat-subtitle">Cesados o licencia</p>
-                </div>
+                <div className="stat-value">{stats.inactivos}</div>
+                <div className="stat-label">Inactivos / Cesados</div>
               </div>
             </div>
 
             {/* Filters */}
             <div className="filters-container">
               <div className="filters-row">
-                <div className="search-box">
-                  <svg className="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                  <input value={searchQuery} onChange={handleSearchInput} type="text" placeholder="Buscar por DNI, nombre, email..." className="search-input" />
+                <div className="filter-group">
+                  <label className="filter-label">BUSCAR TRABAJADOR</label>
+                  <div className="filter-input-wrapper">
+                    {SearchIcon}
+                    <input
+                      type="text"
+                      placeholder="DNI o Nombre..."
+                      value={searchQuery}
+                      onChange={handleSearchInput}
+                    />
+                  </div>
                 </div>
-                <select value={filterCargo} onChange={handleCargoFilter} className="filter-select">
-                  <option value="">Todos los cargos</option>
-                  {uniqueCargos.map(cargo => <option key={cargo} value={cargo}>{cargo}</option>)}
-                </select>
+
+                <div className="filter-group">
+                  <label className="filter-label">FILTRAR POR CARGO</label>
+                  <select
+                    className="filter-select"
+                    value={filterCargo}
+                    onChange={handleCargoFilter}
+                  >
+                    <option value="">Todos los cargos</option>
+                    {uniqueCargos.map(cargo => <option key={cargo} value={cargo}>{cargo}</option>)}
+                  </select>
+                </div>
+
                 <button onClick={openCreateModal} className="btn-new-worker">
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+                  {PlusIcon}
                   Nuevo Trabajador
                 </button>
               </div>
@@ -478,60 +495,16 @@ export default function TrabajadoresIndex() {
 
             {/* Table */}
             <div className="table-container">
-              {loading ? (
-                <div className="loading-state">
-                  <div className="spinner" />
-                  <p>Cargando trabajadores...</p>
-                </div>
-              ) : trabajadores.length === 0 ? (
-                <div className="empty-state">
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                  <p>No hay trabajadores registrados</p>
-                  <button onClick={openCreateModal} className="btn-primary">Agregar primer trabajador</button>
-                </div>
-              ) : (
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Trabajador</th>
-                      <th>DNI</th>
-                      <th>Cargo</th>
-                      <th>Fecha Ingreso</th>
-                      <th>Estado</th>
-                      <th className="text-right">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredTrabajadores.map(t => (
-                      <tr key={t.id}>
-                        <td>
-                          <div className="worker-info">
-                            <div className="avatar">{getInitials(t)}</div>
-                            <div>
-                              <div className="worker-name">{t.nombre_completo || `${t.apellido_paterno} ${t.apellido_materno}, ${t.nombres}`}</div>
-                              <div className="worker-email">{t.email || 'Sin email'}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="mono">{t.dni}</td>
-                        <td>{t.cargo || '-'}</td>
-                        <td>{formatDate(t.fecha_ingreso)}</td>
-                        <td>
-                          <span className={`badge ${BADGE_CLASSES[t.estado] || 'badge-default'}`}>{t.estado}</span>
-                        </td>
-                        <td className="actions-cell">
-                          <button onClick={() => editTrabajador(t)} className="btn-action btn-edit" title="Editar">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                          </button>
-                          <button onClick={() => confirmDelete(t)} className="btn-action btn-delete" title="Eliminar">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+              <TrabajadoresTable
+                trabajadores={filteredTrabajadores}
+                loading={loading}
+                onEdit={editTrabajador}
+                onDelete={confirmDelete}
+                formatDate={formatDate}
+                getInitials={getInitials}
+                badgeClasses={BADGE_CLASSES}
+                openCreateModal={openCreateModal}
+              />
             </div>
           </div>
 
@@ -552,7 +525,7 @@ export default function TrabajadoresIndex() {
                         {downloadingTemplate ? (
                           <span className="spinner-small" />
                         ) : (
-                          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                          DownloadIcon
                         )}
                         {downloadingTemplate ? 'Descargando...' : 'Descargar Plantilla'}
                       </button>
@@ -589,7 +562,7 @@ export default function TrabajadoresIndex() {
                         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleFileSelect} style={{ display: 'none' }} />
                         {selectedFile ? (
                           <div className="upload-file-info">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            {FileIcon}
                             <div>
                               <p className="file-name">{selectedFile.name}</p>
                               <p className="file-size">{(selectedFile.size / 1024).toFixed(2)} KB</p>
@@ -598,21 +571,17 @@ export default function TrabajadoresIndex() {
                           </div>
                         ) : (
                           <div className="upload-placeholder" onClick={() => fileInputRef.current?.click()}>
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                            <p>Arrastra el archivo aquí o haz clic para seleccionar</p>
-                            <span className="upload-hint">Solo archivos Excel (.xlsx)</span>
+                            {UploadIcon}
+                            <p>Arrastra el archivo Excel aquí o haz clic para seleccionar</p>
+                            <span className="upload-hint">Formatos soportados: .xlsx, .xls</span>
                           </div>
                         )}
                       </div>
 
                       {selectedFile ? (
-                        <button onClick={importExcel} disabled={importing} className="btn-import">
-                          {importing ? (
-                            <span className="spinner-small" />
-                          ) : (
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                          )}
-                          {importing ? 'Importando...' : 'Importar Trabajadores'}
+                        <button onClick={importExcel} disabled={importing || !selectedFile} className="btn-import">
+                          {importing ? <span className="spinner-small" /> : UploadIcon}
+                          {importing ? 'Importando...' : 'Comenzar Importación'}
                         </button>
                       ) : null}
                     </div>
@@ -661,7 +630,7 @@ export default function TrabajadoresIndex() {
         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
           <div className="modal-container">
             <button onClick={closeModal} className="modal-close" title="Cerrar">
-              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              {CloseIcon}
             </button>
 
             <div className="modal-form-card">
