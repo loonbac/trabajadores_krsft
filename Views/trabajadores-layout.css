@@ -105,11 +105,14 @@ svg {
 .stat-card {
     box-shadow: none !important;
     border: 1px solid var(--border-color);
-    transition: transform 0.2s ease !important;
+    transition: none !important;
+    /* No animation */
+    cursor: default;
 }
 
 .stat-card:hover {
-    transform: translateY(-1px) !important;
+    transform: none !important;
+    /* No movement */
     box-shadow: none !important;
 }
 
@@ -161,11 +164,18 @@ svg {
 .search-icon-fixed {
     position: absolute;
     left: 15px;
+    top: 50%;
+    /* Center vertically */
+    transform: translateY(-50%);
+    /* precise centering */
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    z-index: 5;
+    z-index: 20;
+    /* Ensure it's above input */
+    width: 20px;
+    height: 20px;
 }
 
 .search-icon-fixed svg {
@@ -182,8 +192,8 @@ svg {
     outline: none !important;
     /* CRITICAL: Remove the black rectangle */
     box-shadow: none !important;
-    padding: 12px 12px 12px 48px !important;
-    /* Spacing for the glass icon */
+    padding: 12px 12px 12px 55px !important;
+    /* Increased spacing for better separation */
     width: 100%;
     background: transparent;
     font-size: 0.95rem;

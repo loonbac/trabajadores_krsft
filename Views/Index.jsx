@@ -15,6 +15,21 @@ import {
 } from './components/Icons';
 import TrabajadoresTable from './components/TrabajadoresTable';
 
+import CustomSelect from './components/CustomSelect';
+
+// ... inside component
+
+<CustomSelect
+  value={filterCargo}
+  onChange={setFilterCargo}
+  options={[
+    { value: '', label: 'Todos los cargos' },
+    ...uniqueCargos.map(c => ({ value: c, label: c }))
+  ]}
+  placeholder="Todos los cargos"
+/>
+
+
 // ── Constants ──
 const POLLING_INTERVAL_MS = 3000;
 const CACHE_PREFIX = 'trabajadores_cache_';
@@ -471,14 +486,15 @@ export default function TrabajadoresIndex() {
                 />
               </div>
 
-              <select
-                className="filter-select"
+              <CustomSelect
                 value={filterCargo}
-                onChange={handleCargoFilter}
-              >
-                <option value="">Todos los cargos</option>
-                {uniqueCargos.map(cargo => <option key={cargo} value={cargo}>{cargo}</option>)}
-              </select>
+                onChange={setFilterCargo}
+                options={[
+                  { value: '', label: 'Todos los cargos' },
+                  ...uniqueCargos.map(c => ({ value: c, label: c }))
+                ]}
+                placeholder="Todos los cargos"
+              />
 
               <button onClick={openCreateModal} className="btn-new-worker">
                 {PlusIcon}
