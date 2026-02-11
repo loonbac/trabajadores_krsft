@@ -1,11 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
-/* ── Core ERP base styles (remove imports if you don't want base styles) ── */
-import '../../../resources/css/Bytewave-theme.css';
-import '../../../resources/css/modules-layout.css';
-import '../../../resources/css/users-table.css';
-import '../../../resources/css/modules-modal.css';
-
 /* ── Module-specific styles (modular split) ── */
 import './trabajadores-layout.css';
 import './trabajadores-table.css';
@@ -16,7 +10,8 @@ import './trabajadores-modal.css';
 // ── Components ──
 import {
   BackIcon, SunIcon, MoonIcon, ListIcon, UploadIcon,
-  SearchIcon, PlusIcon, TeamIcon, StatUsersIcon
+  SearchIcon, PlusIcon, TeamIcon, StatUsersIcon,
+  CheckCircleIcon, XCircleIcon, DownloadIcon, FileIcon, CloseIcon
 } from './components/Icons';
 import TrabajadoresTable from './components/TrabajadoresTable';
 
