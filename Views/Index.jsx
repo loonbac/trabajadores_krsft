@@ -14,23 +14,8 @@ import {
   CheckCircleIcon, XCircleIcon, DownloadIcon, FileIcon, CloseIcon
 } from './components/Icons';
 import TrabajadoresTable from './components/TrabajadoresTable';
-
 import CustomSelect from './components/CustomSelect';
 
-// ... inside component
-
-<CustomSelect
-  value={filterCargo}
-  onChange={setFilterCargo}
-  options={[
-    { value: '', label: 'Todos los cargos' },
-    ...uniqueCargos.map(c => ({ value: c, label: c }))
-  ]}
-  placeholder="Todos los cargos"
-/>
-
-
-// ── Constants ──
 const POLLING_INTERVAL_MS = 3000;
 const CACHE_PREFIX = 'trabajadores_cache_';
 const DEFAULT_FORM = {
