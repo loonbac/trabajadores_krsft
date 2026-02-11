@@ -748,7 +748,7 @@ export default function TrabajadoresIndex() {
                     </div>
                   </div>
 
-                  <div className="form-group span-full">
+                  <div className="form-group span-full form-group-observations">
                     <label>Observaciones</label>
                     <textarea name="observaciones" value={form.observaciones || ''} onChange={handleFormChange} rows="3" placeholder="Notas adicionales..." />
                   </div>
