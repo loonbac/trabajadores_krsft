@@ -386,7 +386,8 @@ export default function TrabajadoresIndex() {
         <header className="module-header">
           <div className="header-left">
             <button onClick={() => window.history.back()} className="btn-back" title="Volver">
-              <span className="btn-icon">{BackIcon}</span>
+              {BackIcon}
+              Volver
             </button>
             <div className="module-title">
               <div className="title-icon-wrapper">
@@ -476,7 +477,6 @@ export default function TrabajadoresIndex() {
                 </div>
 
                 <div className="filter-group">
-                  <label className="filter-label">FILTRAR POR CARGO</label>
                   <select
                     className="filter-select"
                     value={filterCargo}
