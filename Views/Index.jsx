@@ -109,15 +109,26 @@ export default function TrabajadoresIndex() {
   }, [trabajadores]);
 
   const filteredTrabajadores = useMemo(() => {
-    if (!searchQuery) return trabajadores;
-    const q = searchQuery.toLowerCase();
-    return trabajadores.filter(t =>
-      t.dni?.toLowerCase().includes(q) ||
-      t.nombre_completo?.toLowerCase().includes(q) ||
-      t.nombres?.toLowerCase().includes(q) ||
-      t.email?.toLowerCase().includes(q)
-    );
-  }, [trabajadores, searchQuery]);
+    let result = trabajadores;
+
+    // Search filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(t =>
+        t.dni?.toLowerCase().includes(q) ||
+        t.nombre_completo?.toLowerCase().includes(q) ||
+        t.nombres?.toLowerCase().includes(q) ||
+        t.email?.toLowerCase().includes(q)
+      );
+    }
+
+    // Cargo filter
+    if (filterCargo) {
+      result = result.filter(t => t.cargo === filterCargo);
+    }
+
+    return result;
+  }, [trabajadores, searchQuery, filterCargo]);
 
   // ── Toast helper ──
   const showToast = useCallback((message, type = 'success') => {
@@ -129,20 +140,15 @@ export default function TrabajadoresIndex() {
   const loadTrabajadores = useCallback(async (withLoading = false) => {
     if (withLoading) setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (filterCargo) params.set('cargo', filterCargo);
-      if (searchQuery) params.set('search', searchQuery);
-
-      const res = await fetch(`/api/${getModuleName()}/list?${params}`, {
+      const res = await fetch(`/api/${getModuleName()}/list`, {
         headers: { Accept: 'application/json', 'X-CSRF-TOKEN': getCsrfToken() },
       });
       const data = await res.json();
       if (data.success) {
         const incoming = data.trabajadores || [];
-        // Only update if data actually changed
         if (JSON.stringify(trabajadoresRef.current) !== JSON.stringify(incoming)) {
           setTrabajadores(incoming);
-          if (!filterCargo && !searchQuery) saveToCache('trabajadores', incoming);
+          saveToCache('trabajadores', incoming);
         }
       }
     } catch (e) {
@@ -150,7 +156,7 @@ export default function TrabajadoresIndex() {
       if (withLoading) showToast('Error al cargar trabajadores', 'error');
     }
     if (withLoading) setLoading(false);
-  }, [filterCargo, searchQuery, showToast]);
+  }, [showToast]);
 
   const loadStats = useCallback(async () => {
     try {
@@ -211,11 +217,12 @@ export default function TrabajadoresIndex() {
 
   // ── Search debounce ──
   const handleSearchInput = useCallback((e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    clearTimeout(searchTimeoutRef.current);
-    searchTimeoutRef.current = setTimeout(() => loadTrabajadores(), 500);
-  }, [loadTrabajadores]);
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const handleCargoFilter = useCallback((e) => {
+    setFilterCargo(e.target.value);
+  }, []);
 
   // ── Actions ──
   const toggleDarkMode = useCallback(() => {
@@ -363,14 +370,6 @@ export default function TrabajadoresIndex() {
     setImporting(false);
   }, [selectedFile, showToast, loadTrabajadores, loadStats]);
 
-  // ── Filter by cargo ──
-  const handleCargoFilter = useCallback((e) => {
-    setFilterCargo(e.target.value);
-  }, []);
-
-  useEffect(() => {
-    loadTrabajadores();
-  }, [filterCargo, loadTrabajadores]);
 
   // ══════════════════════════════════════════════
   // RENDER
@@ -390,11 +389,11 @@ export default function TrabajadoresIndex() {
               Volver
             </button>
             <div className="module-title">
-              <div className="title-icon-wrapper">
+              <div className="title-icon-wrapper title-icon-white">
                 {StatUsersIcon}
               </div>
               <div>
-                <h1>Gestión de Trabajadores</h1>
+                <h1>GESTIÓN DE TRABAJADORES</h1>
                 <p className="module-subtitle">Administre el personal y la información laboral</p>
               </div>
             </div>
@@ -432,7 +431,7 @@ export default function TrabajadoresIndex() {
             {/* Stats Cards — reuses .stats-grid, .stat-card, .stat-icon from core */}
             <div className="stats-grid">
               <div className="stat-card stat-total">
-                <div className="stat-icon">
+                <div className="stat-icon stat-icon-white">
                   {StatUsersIcon}
                 </div>
                 <div className="stat-content">
@@ -461,37 +460,30 @@ export default function TrabajadoresIndex() {
             </div>
 
             {/* Filters */}
-            <div className="filters-container">
-              <div className="filters-row">
-                <div className="filter-group">
-                  <label className="filter-label">BUSCAR TRABAJADOR</label>
-                  <div className="filter-input-wrapper">
-                    {SearchIcon}
-                    <input
-                      type="text"
-                      placeholder="DNI o Nombre..."
-                      value={searchQuery}
-                      onChange={handleSearchInput}
-                    />
-                  </div>
-                </div>
-
-                <div className="filter-group">
-                  <select
-                    className="filter-select"
-                    value={filterCargo}
-                    onChange={handleCargoFilter}
-                  >
-                    <option value="">Todos los cargos</option>
-                    {uniqueCargos.map(cargo => <option key={cargo} value={cargo}>{cargo}</option>)}
-                  </select>
-                </div>
-
-                <button onClick={openCreateModal} className="btn-new-worker">
-                  {PlusIcon}
-                  Nuevo Trabajador
-                </button>
+            <div className="filters-container-row">
+              <div className="filter-input-wrapper with-border">
+                <span className="search-icon-fixed">{SearchIcon}</span>
+                <input
+                  type="text"
+                  placeholder="DNI o Nombre..."
+                  value={searchQuery}
+                  onChange={handleSearchInput}
+                />
               </div>
+
+              <select
+                className="filter-select"
+                value={filterCargo}
+                onChange={handleCargoFilter}
+              >
+                <option value="">Todos los cargos</option>
+                {uniqueCargos.map(cargo => <option key={cargo} value={cargo}>{cargo}</option>)}
+              </select>
+
+              <button onClick={openCreateModal} className="btn-new-worker">
+                {PlusIcon}
+                Nuevo Trabajador
+              </button>
             </div>
 
             {/* Table */}
