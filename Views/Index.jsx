@@ -385,8 +385,8 @@ export default function TrabajadoresIndex() {
         {/* Header — reuses .module-header, .header-left, .btn-back from core */}
         <header className="module-header">
           <div className="header-left">
-            <button onClick={() => window.history.back()} className="back-btn" title="Volver">
-              {BackIcon}
+            <button onClick={() => window.history.back()} className="btn-back" title="Volver">
+              <span className="btn-icon">{BackIcon}</span>
             </button>
             <div className="module-title">
               <div className="title-icon-wrapper">
@@ -407,17 +407,17 @@ export default function TrabajadoresIndex() {
         </header>
 
         {/* Tabs — reuses .tabs-container, .tab-button from core */}
-        <div className="tabs-nav">
+        <div className="tabs-container">
           <button
             onClick={() => setActiveTab('list')}
-            className={`tab-btn${activeTab === 'list' ? ' is-active' : ''}`}
+            className={`tab-button${activeTab === 'list' ? ' tab-active' : ''}`}
           >
             {ListIcon}
             Listado
           </button>
           <button
             onClick={() => setActiveTab('import')}
-            className={`tab-btn${activeTab === 'import' ? ' is-active' : ''}`}
+            className={`tab-button${activeTab === 'import' ? ' tab-active' : ''}`}
           >
             {UploadIcon}
             Importar Excel
@@ -430,26 +430,32 @@ export default function TrabajadoresIndex() {
           <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
             {/* Stats Cards — reuses .stats-grid, .stat-card, .stat-icon from core */}
             <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-icon-bg">
+              <div className="stat-card stat-total">
+                <div className="stat-icon">
                   {StatUsersIcon}
                 </div>
-                <div className="stat-value">{stats.total}</div>
-                <div className="stat-label">Total Personal</div>
+                <div className="stat-content">
+                  <div className="stat-number">{stats.total}</div>
+                  <h3>Total Personal</h3>
+                </div>
               </div>
-              <div className="stat-card stat-active">
-                <div className="stat-icon-bg">
+              <div className="stat-card stat-installed">
+                <div className="stat-icon">
                   {CheckCircleIcon}
                 </div>
-                <div className="stat-value">{stats.activos}</div>
-                <div className="stat-label">Personal Activo</div>
+                <div className="stat-content">
+                  <div className="stat-number">{stats.activos}</div>
+                  <h3>Personal Activo</h3>
+                </div>
               </div>
-              <div className="stat-card stat-inactive">
-                <div className="stat-icon-bg">
+              <div className="stat-card stat-updates">
+                <div className="stat-icon">
                   {XCircleIcon}
                 </div>
-                <div className="stat-value">{stats.inactivos}</div>
-                <div className="stat-label">Inactivos / Cesados</div>
+                <div className="stat-content">
+                  <div className="stat-number">{stats.inactivos}</div>
+                  <h3>Inactivos / Cesados</h3>
+                </div>
               </div>
             </div>
 

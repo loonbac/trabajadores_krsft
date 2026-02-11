@@ -50,6 +50,70 @@ body.dark-mode .trabajadores-container {
     background: rgba(30, 41, 59, 0.95);
 }
 
+/* ── Header Improvements ── */
+.module-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.title-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background: var(--color-primary-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.title-icon-wrapper svg {
+    width: 28px;
+    height: 28px;
+    color: var(--color-primary);
+}
+
+.module-title h1 {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.module-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.875rem;
+    color: var(--text-gray);
+}
+
+/* ── Icon Sizing Overrides ── */
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.btn-icon svg,
+.tab-button svg,
+.stat-icon svg,
+.btn-new-worker svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* ── Stats Adjustments ── */
+.stat-card.stat-total .stat-icon {
+    background: var(--color-primary);
+}
+
+.stat-card.stat-installed .stat-icon {
+    background: var(--color-success);
+}
+
+.stat-card.stat-updates .stat-icon {
+    background: var(--color-danger);
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
     .trabajadores-container {
