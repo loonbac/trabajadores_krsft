@@ -675,7 +675,7 @@ export default function TrabajadoresIndex() {
                     <label>Teléfono</label>
                     <input name="telefono" value={form.telefono || ''} onChange={handleFormChange} type="tel" placeholder="999888777" />
                   </div>
-                  <div className="form-group span-2">
+                  <div className="form-group span-full">
                     <label>Email</label>
                     <input name="email" value={form.email || ''} onChange={handleFormChange} type="email" placeholder="correo@empresa.com" />
                   </div>

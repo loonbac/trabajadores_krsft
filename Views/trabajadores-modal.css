@@ -13,29 +13,32 @@
 
 .modal-close {
     position: absolute;
-    top: -12px;
-    right: -12px;
-    width: 40px;
-    height: 40px;
-    background: var(--color-danger);
-    color: white;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    background: #F1F5F9;
+    color: #64748B;
     border: none;
-    border-radius: 50%;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-    transition: var(--transition-fast);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    z-index: 20;
+    transition: all 0.2s ease;
 }
 
 .modal-close:hover {
-    transform: scale(1.1);
-    background: var(--color-danger-dark);
+    background: #E2E8F0;
+    color: #0F172A;
+    transform: rotate(90deg);
 }
 
-.modal-close svg { width: 20px; height: 20px; }
+.modal-close svg {
+    width: 20px;
+    height: 20px;
+}
 
 .modal-form-card {
     background: var(--bg-container-solid);
@@ -59,9 +62,13 @@ body.dark-mode .modal-form-card {
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-    .modal-container { max-width: 100%; }
+    .modal-container {
+        max-width: 100%;
+    }
 
-    .modal-form-card { padding: 20px; }
+    .modal-form-card {
+        padding: 20px;
+    }
 
     .modal-close {
         top: -8px;
