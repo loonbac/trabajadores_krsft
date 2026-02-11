@@ -65,9 +65,10 @@ body.dark-mode .modal-form-card {
     border-bottom: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
     background: white;
+    gap: 3px;
 }
 
 body.dark-mode .modal-header {
@@ -82,7 +83,9 @@ body.dark-mode .modal-header {
 }
 
 .modal-header .form-subtitle {
-    margin: 4px 0 0 0 !important;
+    margin: 0 !important;
+    /* Spacing handled by flex gap or reset */
+    font-size: 14px;
 }
 
 .modal-body {
