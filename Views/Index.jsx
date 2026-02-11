@@ -623,150 +623,154 @@ export default function TrabajadoresIndex() {
       {showModal ? (
         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
           <div className="modal-container">
-            <button onClick={closeModal} className="modal-close" title="Cerrar">
-              {CloseIcon}
-            </button>
-
             <div className="modal-form-card">
-              <h2>{editingId ? 'Editar Trabajador' : 'Nuevo Trabajador'}</h2>
-              <p className="form-subtitle">Complete los campos requeridos (*) para registrar al trabajador.</p>
+              <div className="modal-header">
+                <div className="header-content">
+                  <h2>{editingId ? 'Editar Trabajador' : 'Nuevo Trabajador'}</h2>
+                  <p className="form-subtitle">Complete los campos requeridos (*) para registrar al trabajador.</p>
+                </div>
+                <button onClick={closeModal} className="modal-close" title="Cerrar">
+                  {CloseIcon}
+                </button>
+              </div>
 
-              <form onSubmit={saveTrabajador} className="worker-form">
-                {/* Datos Personales */}
-                <div className="form-section-title">Datos Personales</div>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>DNI/CE *</label>
-                    <input name="dni" value={form.dni} onChange={handleFormChange} type="text" maxLength="12" required placeholder="12345678" />
+              <div className="modal-body">
+                <form onSubmit={saveTrabajador} className="worker-form">
+                  {/* Datos Personales */}
+                  <div className="form-section-title">Datos Personales</div>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>DNI/CE *</label>
+                      <input name="dni" value={form.dni} onChange={handleFormChange} type="text" maxLength="12" required placeholder="12345678" />
+                    </div>
+                    <div className="form-group">
+                      <label>Nombres *</label>
+                      <input name="nombres" value={form.nombres} onChange={handleFormChange} type="text" required placeholder="Juan Carlos" />
+                    </div>
+                    <div className="form-group">
+                      <label>Apellido Paterno *</label>
+                      <input name="apellido_paterno" value={form.apellido_paterno} onChange={handleFormChange} type="text" required placeholder="García" />
+                    </div>
+                    <div className="form-group">
+                      <label>Apellido Materno</label>
+                      <input name="apellido_materno" value={form.apellido_materno || ''} onChange={handleFormChange} type="text" placeholder="López" />
+                    </div>
+                    <div className="form-group">
+                      <label>Fecha de Nacimiento</label>
+                      <input name="fecha_nacimiento" value={form.fecha_nacimiento || ''} onChange={handleFormChange} type="date" />
+                    </div>
+                    <div className="form-group">
+                      <label>Género</label>
+                      <select name="genero" value={form.genero} onChange={handleFormChange}>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Estado Civil</label>
+                      <select name="estado_civil" value={form.estado_civil} onChange={handleFormChange}>
+                        <option value="Soltero">Soltero</option>
+                        <option value="Casado">Casado</option>
+                        <option value="Divorciado">Divorciado</option>
+                        <option value="Viudo">Viudo</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Teléfono</label>
+                      <input name="telefono" value={form.telefono || ''} onChange={handleFormChange} type="tel" placeholder="999888777" />
+                    </div>
+                    <div className="form-group span-full">
+                      <label>Email</label>
+                      <input name="email" value={form.email || ''} onChange={handleFormChange} type="email" placeholder="correo@empresa.com" />
+                    </div>
+                    <div className="form-group span-full">
+                      <label>Dirección</label>
+                      <input name="direccion" value={form.direccion || ''} onChange={handleFormChange} type="text" placeholder="Av. Principal 123" />
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label>Nombres *</label>
-                    <input name="nombres" value={form.nombres} onChange={handleFormChange} type="text" required placeholder="Juan Carlos" />
+
+                  {/* Datos Laborales */}
+                  <div className="form-section-title">Datos Laborales</div>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Cargo *</label>
+                      <input name="cargo" value={form.cargo || ''} onChange={handleFormChange} type="text" required placeholder="Analista" />
+                    </div>
+                    <div className="form-group">
+                      <label>Fecha de Ingreso *</label>
+                      <input name="fecha_ingreso" value={form.fecha_ingreso || ''} onChange={handleFormChange} type="date" required />
+                    </div>
+                    <div className="form-group">
+                      <label>Tipo de Contrato</label>
+                      <select name="tipo_contrato" value={form.tipo_contrato} onChange={handleFormChange}>
+                        <option value="Indefinido">Indefinido</option>
+                        <option value="Plazo Fijo">Plazo Fijo</option>
+                        <option value="Temporal">Temporal</option>
+                        <option value="Practicas">Prácticas</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Estado</label>
+                      <select name="estado" value={form.estado} onChange={handleFormChange}>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                        <option value="Cesado">Cesado</option>
+                        <option value="Vacaciones">Vacaciones</option>
+                        <option value="Licencia">Licencia</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Sueldo Básico</label>
+                      <input name="sueldo_basico" value={form.sueldo_basico || ''} onChange={handleFormChange} type="number" step="0.01" placeholder="2500.00" />
+                    </div>
+                    <div className="form-group">
+                      <label>Sistema de Pensiones</label>
+                      <select name="sistema_pensiones" value={form.sistema_pensiones || ''} onChange={handleFormChange}>
+                        <option value="">Sin asignar</option>
+                        <option value="ONP">ONP</option>
+                        <option value="AFP Integra">AFP Integra</option>
+                        <option value="AFP Prima">AFP Prima</option>
+                        <option value="AFP Profuturo">AFP Profuturo</option>
+                        <option value="AFP Habitat">AFP Habitat</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label>Apellido Paterno *</label>
-                    <input name="apellido_paterno" value={form.apellido_paterno} onChange={handleFormChange} type="text" required placeholder="García" />
+
+                  {/* Contacto de Emergencia */}
+                  <div className="form-section-title">Contacto de Emergencia</div>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Nombre</label>
+                      <input name="contacto_emergencia_nombre" value={form.contacto_emergencia_nombre || ''} onChange={handleFormChange} type="text" placeholder="María García" />
+                    </div>
+                    <div className="form-group">
+                      <label>Teléfono</label>
+                      <input name="contacto_emergencia_telefono" value={form.contacto_emergencia_telefono || ''} onChange={handleFormChange} type="tel" placeholder="999111222" />
+                    </div>
+                    <div className="form-group">
+                      <label>Parentesco</label>
+                      <input name="contacto_emergencia_parentesco" value={form.contacto_emergencia_parentesco || ''} onChange={handleFormChange} type="text" placeholder="Esposa" />
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label>Apellido Materno</label>
-                    <input name="apellido_materno" value={form.apellido_materno || ''} onChange={handleFormChange} type="text" placeholder="López" />
-                  </div>
-                  <div className="form-group">
-                    <label>Fecha de Nacimiento</label>
-                    <input name="fecha_nacimiento" value={form.fecha_nacimiento || ''} onChange={handleFormChange} type="date" />
-                  </div>
-                  <div className="form-group">
-                    <label>Género</label>
-                    <select name="genero" value={form.genero} onChange={handleFormChange}>
-                      <option value="M">Masculino</option>
-                      <option value="F">Femenino</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Estado Civil</label>
-                    <select name="estado_civil" value={form.estado_civil} onChange={handleFormChange}>
-                      <option value="Soltero">Soltero</option>
-                      <option value="Casado">Casado</option>
-                      <option value="Divorciado">Divorciado</option>
-                      <option value="Viudo">Viudo</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Teléfono</label>
-                    <input name="telefono" value={form.telefono || ''} onChange={handleFormChange} type="tel" placeholder="999888777" />
-                  </div>
+
                   <div className="form-group span-full">
-                    <label>Email</label>
-                    <input name="email" value={form.email || ''} onChange={handleFormChange} type="email" placeholder="correo@empresa.com" />
+                    <label>Observaciones</label>
+                    <textarea name="observaciones" value={form.observaciones || ''} onChange={handleFormChange} rows="3" placeholder="Notas adicionales..." />
                   </div>
-                  <div className="form-group span-full">
-                    <label>Dirección</label>
-                    <input name="direccion" value={form.direccion || ''} onChange={handleFormChange} type="text" placeholder="Av. Principal 123" />
-                  </div>
-                </div>
 
-                {/* Datos Laborales */}
-                <div className="form-section-title">Datos Laborales</div>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Cargo *</label>
-                    <input name="cargo" value={form.cargo || ''} onChange={handleFormChange} type="text" required placeholder="Analista" />
+                  {/* Actions */}
+                  <div className="form-actions">
+                    <button type="button" onClick={closeModal} className="btn-secondary">Cancelar</button>
+                    <button type="submit" disabled={saving} className="btn-primary">
+                      {saving ? <span className="spinner-small" /> : null}
+                      {saving ? 'Guardando...' : (editingId ? 'Actualizar' : 'Registrar')}
+                    </button>
                   </div>
-                  <div className="form-group">
-                    <label>Fecha de Ingreso *</label>
-                    <input name="fecha_ingreso" value={form.fecha_ingreso || ''} onChange={handleFormChange} type="date" required />
-                  </div>
-                  <div className="form-group">
-                    <label>Tipo de Contrato</label>
-                    <select name="tipo_contrato" value={form.tipo_contrato} onChange={handleFormChange}>
-                      <option value="Indefinido">Indefinido</option>
-                      <option value="Plazo Fijo">Plazo Fijo</option>
-                      <option value="Temporal">Temporal</option>
-                      <option value="Practicas">Prácticas</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Estado</label>
-                    <select name="estado" value={form.estado} onChange={handleFormChange}>
-                      <option value="Activo">Activo</option>
-                      <option value="Inactivo">Inactivo</option>
-                      <option value="Cesado">Cesado</option>
-                      <option value="Vacaciones">Vacaciones</option>
-                      <option value="Licencia">Licencia</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Sueldo Básico</label>
-                    <input name="sueldo_basico" value={form.sueldo_basico || ''} onChange={handleFormChange} type="number" step="0.01" placeholder="2500.00" />
-                  </div>
-                  <div className="form-group">
-                    <label>Sistema de Pensiones</label>
-                    <select name="sistema_pensiones" value={form.sistema_pensiones || ''} onChange={handleFormChange}>
-                      <option value="">Sin asignar</option>
-                      <option value="ONP">ONP</option>
-                      <option value="AFP Integra">AFP Integra</option>
-                      <option value="AFP Prima">AFP Prima</option>
-                      <option value="AFP Profuturo">AFP Profuturo</option>
-                      <option value="AFP Habitat">AFP Habitat</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Contacto de Emergencia */}
-                <div className="form-section-title">Contacto de Emergencia</div>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Nombre</label>
-                    <input name="contacto_emergencia_nombre" value={form.contacto_emergencia_nombre || ''} onChange={handleFormChange} type="text" placeholder="María García" />
-                  </div>
-                  <div className="form-group">
-                    <label>Teléfono</label>
-                    <input name="contacto_emergencia_telefono" value={form.contacto_emergencia_telefono || ''} onChange={handleFormChange} type="tel" placeholder="999111222" />
-                  </div>
-                  <div className="form-group">
-                    <label>Parentesco</label>
-                    <input name="contacto_emergencia_parentesco" value={form.contacto_emergencia_parentesco || ''} onChange={handleFormChange} type="text" placeholder="Esposa" />
-                  </div>
-                </div>
-
-                <div className="form-group span-full">
-                  <label>Observaciones</label>
-                  <textarea name="observaciones" value={form.observaciones || ''} onChange={handleFormChange} rows="3" placeholder="Notas adicionales..." />
-                </div>
-
-                {/* Actions */}
-                <div className="form-actions">
-                  <button type="button" onClick={closeModal} className="btn-secondary">Cancelar</button>
-                  <button type="submit" disabled={saving} className="btn-primary">
-                    {saving ? <span className="spinner-small" /> : null}
-                    {saving ? 'Guardando...' : (editingId ? 'Actualizar' : 'Registrar')}
-                  </button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
       ) : null}
-    </div>
-  );
+        </div>
+      );
 }
