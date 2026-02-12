@@ -11,7 +11,6 @@
     overflow: hidden !important;
 }
 
-/* Animated gradient background */
 .trabajadores-bg {
     position: absolute;
     top: 0;
@@ -22,10 +21,27 @@
     background-size: 200% 200%;
     animation: gradientShift 8s ease infinite;
     z-index: 0;
+    transition: opacity 0.25s ease;
 }
 
-body.dark-mode .trabajadores-bg {
+/* Pseudo-element for dark mode background cross-fade */
+.trabajadores-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    background-size: 200% 200%;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    z-index: 1;
+    /* Above the base gradient */
+}
+
+body.dark-mode .trabajadores-bg::after {
+    opacity: 1;
 }
 
 /* Glass panel container */
@@ -44,10 +60,17 @@ body.dark-mode .trabajadores-bg {
     z-index: 10;
     overflow: hidden !important;
     box-shadow: var(--shadow-lg);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, backdrop-filter 0.2s ease;
 }
 
 body.dark-mode .trabajadores-container {
     background: rgba(30, 41, 59, 0.95);
+}
+
+body.dark-mode .data-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: #f1f5f9;
+    /* Force white text in dark mode for all cells */
 }
 
 /* ── Header Improvements ── */
@@ -99,15 +122,15 @@ svg {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
+    transition: stroke 0.2s ease, fill 0.2s ease, color 0.2s ease;
 }
 
 /* ── Stats Adjustments ── */
 .stat-card {
     box-shadow: none !important;
     border: 1px solid var(--border-color);
-    transition: none !important;
-    /* No animation */
     cursor: default;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
@@ -152,7 +175,7 @@ svg {
     display: flex;
     align-items: center;
     background: white;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .filter-input-wrapper.with-border:focus-within {
@@ -198,12 +221,31 @@ svg {
     background: transparent;
     font-size: 0.95rem;
     color: #1E293B;
+    transition: color 0.2s ease;
 }
 
 .filter-input-wrapper.with-border input:focus {
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
+}
+
+body.dark-mode .filter-input-wrapper.with-border {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode .filter-input-wrapper.with-border input {
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .filter-input-wrapper.with-border input::placeholder {
+    color: #94a3b8 !important;
+    opacity: 0.7;
+}
+
+body.dark-mode .search-icon-fixed svg {
+    stroke: #94a3b8 !important;
 }
 
 .filter-select {
@@ -221,7 +263,7 @@ svg {
     background-size: 16px;
     appearance: none;
     -webkit-appearance: none;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .filter-select:focus {
@@ -295,10 +337,10 @@ body {
     border: 1px solid #E2E8F0;
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
     user-select: none;
     font-size: 0.95rem;
     color: #1E293B;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .custom-select-trigger:hover {
@@ -332,6 +374,7 @@ body {
     max-height: 300px;
     overflow-y: auto;
     animation: slideDown 0.2s ease-out;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 @keyframes slideDown {
