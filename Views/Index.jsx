@@ -83,6 +83,9 @@ export default function TrabajadoresIndex() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ ...DEFAULT_FORM });
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Import state
   const [selectedFile, setSelectedFile] = useState(null);
@@ -272,16 +275,24 @@ export default function TrabajadoresIndex() {
     setSaving(false);
   }, [editingId, form, showToast, closeModal, loadTrabajadores, loadStats]);
 
-  const confirmDelete = useCallback(async (t) => {
-    if (!confirm(`¿Estás seguro de eliminar a ${t.nombre_completo || t.nombres}?`)) return;
+  const confirmDelete = useCallback((t) => {
+    setItemToDelete(t);
+    setShowDeleteModal(true);
+  }, []);
+
+  const handleDeleteConfirmed = useCallback(async () => {
+    if (!itemToDelete) return;
+    setDeleting(true);
     try {
-      const res = await fetch(`/api/${getModuleName()}/${t.id}`, {
+      const res = await fetch(`/api/${getModuleName()}/${itemToDelete.id}`, {
         method: 'DELETE',
         headers: { Accept: 'application/json', 'X-CSRF-TOKEN': getCsrfToken() },
       });
       const data = await res.json();
       if (data.success) {
         showToast('Trabajador eliminado');
+        setShowDeleteModal(false);
+        setItemToDelete(null);
         await Promise.all([loadTrabajadores(), loadStats()]);
       } else {
         showToast(data.message || 'Error al eliminar', 'error');
@@ -289,7 +300,13 @@ export default function TrabajadoresIndex() {
     } catch {
       showToast('Error de conexión', 'error');
     }
-  }, [showToast, loadTrabajadores, loadStats]);
+    setDeleting(false);
+  }, [itemToDelete, showToast, loadTrabajadores, loadStats]);
+
+  const closeDeleteModal = useCallback(() => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  }, []);
 
   // ── Excel functions ──
   const downloadTemplate = useCallback(async () => {
@@ -763,6 +780,31 @@ export default function TrabajadoresIndex() {
                   </div>
                 </form>
               </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* ── MODAL: CONFIRM ELIMINAR ── */}
+      {showDeleteModal ? (
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) closeDeleteModal(); }}>
+          <div className="delete-modal-card">
+            <div className="delete-modal-icon">
+              {XCircleIcon}
+            </div>
+            <h2>¿Estás seguro?</h2>
+            <p>
+              Estás a punto de eliminar a <strong>{itemToDelete?.nombre_completo || itemToDelete?.nombres}</strong>.
+              Esta acción no se puede deshacer.
+            </p>
+            <div className="delete-modal-actions">
+              <button onClick={closeDeleteModal} className="btn-secondary" disabled={deleting}>
+                Cancelar
+              </button>
+              <button onClick={handleDeleteConfirmed} className="btn-danger" disabled={deleting}>
+                {deleting ? <span className="spinner-small" /> : null}
+                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
+              </button>
             </div>
           </div>
         </div>
