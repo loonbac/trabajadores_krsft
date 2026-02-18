@@ -1,6 +1,7 @@
 /* ============================================
    TRABAJADORES - LAYOUT (module-specific)
    Core deps: Bytewave-theme.css, modules-layout.css
+   v3.1.35: Fondo plano teal, contenedor blanco sólido, sin dark mode
    ============================================ */
 
 /* Viewport container */
@@ -11,66 +12,32 @@
     overflow: hidden !important;
 }
 
+/* Fondo plano teal — sin gradiente */
 .trabajadores-bg {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-    background-size: 200% 200%;
-    animation: gradientShift 8s ease infinite;
+    background: #0AA4A4;
     z-index: 0;
-    transition: opacity 0.25s ease;
 }
 
-/* Pseudo-element for dark mode background cross-fade */
-.trabajadores-bg::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    background-size: 200% 200%;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    z-index: 1;
-    /* Above the base gradient */
-}
-
-body.dark-mode .trabajadores-bg::after {
-    opacity: 1;
-}
-
-/* Glass panel container */
+/* Glass panel container — blanco sólido */
 .trabajadores-container {
     position: fixed;
     top: 30px;
     left: 30px;
     right: 30px;
     bottom: 30px;
-    background: var(--bg-container-solid);
-    backdrop-filter: blur(20px);
-    border-radius: var(--radius-2xl);
+    background: #ffffff;
+    border-radius: 20px;
     padding: 30px 40px;
     display: flex;
     flex-direction: column;
     z-index: 10;
     overflow: hidden !important;
-    box-shadow: var(--shadow-lg);
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, backdrop-filter 0.2s ease;
-}
-
-body.dark-mode .trabajadores-container {
-    background: rgba(30, 41, 59, 0.95);
-}
-
-body.dark-mode .data-table td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    color: #f1f5f9;
-    /* Force white text in dark mode for all cells */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Header Improvements ── */
@@ -83,7 +50,7 @@ body.dark-mode .data-table td {
 .title-icon-wrapper {
     width: 48px;
     height: 48px;
-    background: var(--color-primary-light);
+    background: #0AA4A4;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -94,19 +61,19 @@ body.dark-mode .data-table td {
 .title-icon-wrapper svg {
     width: 28px;
     height: 28px;
-    color: var(--color-primary);
+    color: white;
 }
 
 .module-title h1 {
     font-size: 1.5rem;
-    color: var(--text-dark);
+    color: #1e293b;
     margin: 0;
 }
 
 .module-subtitle {
     margin: 4px 0 0 0;
     font-size: 0.875rem;
-    color: var(--text-gray);
+    color: #64748b;
 }
 
 /* ── Icon Sizing Overrides ── */
@@ -128,27 +95,26 @@ svg {
 /* ── Stats Adjustments ── */
 .stat-card {
     box-shadow: none !important;
-    border: 1px solid var(--border-color);
+    border: 1px solid #e2e8f0;
     cursor: default;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    background: #ffffff;
 }
 
 .stat-card:hover {
     transform: none !important;
-    /* No movement */
     box-shadow: none !important;
 }
 
 .stat-card.stat-total .stat-icon {
-    background: var(--color-primary);
+    background: #0AA4A4;
 }
 
 .stat-card.stat-installed .stat-icon {
-    background: var(--color-success);
+    background: #10b981;
 }
 
 .stat-card.stat-updates .stat-icon {
-    background: var(--color-danger);
+    background: #ef4444;
 }
 
 /* White icons for title and total stats */
@@ -170,17 +136,15 @@ svg {
     position: relative;
     flex: 1;
     border: 1px solid #E2E8F0;
-    /* Lighter border */
     border-radius: 12px;
     display: flex;
     align-items: center;
     background: white;
-    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .filter-input-wrapper.with-border:focus-within {
     border-color: #0AA4A4 !important;
-    /* Force teal on focus */
     box-shadow: 0 0 0 3px rgba(10, 164, 164, 0.1);
 }
 
@@ -188,15 +152,12 @@ svg {
     position: absolute;
     left: 15px;
     top: 50%;
-    /* Center vertically */
     transform: translateY(-50%);
-    /* precise centering */
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
     z-index: 20;
-    /* Ensure it's above input */
     width: 20px;
     height: 20px;
 }
@@ -205,23 +166,18 @@ svg {
     width: 20px;
     height: 20px;
     stroke: #64748B !important;
-    /* Steel blue/gray */
     stroke-width: 2.5px !important;
-    /* Thinner but visible */
 }
 
 .filter-input-wrapper.with-border input {
     border: none !important;
     outline: none !important;
-    /* CRITICAL: Remove the black rectangle */
     box-shadow: none !important;
     padding: 12px 12px 12px 55px !important;
-    /* Increased spacing for better separation */
     width: 100%;
     background: transparent;
     font-size: 0.95rem;
     color: #1E293B;
-    transition: color 0.2s ease;
 }
 
 .filter-input-wrapper.with-border input:focus {
@@ -230,28 +186,10 @@ svg {
     box-shadow: none !important;
 }
 
-body.dark-mode .filter-input-wrapper.with-border {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-}
-
-body.dark-mode .filter-input-wrapper.with-border input {
-    color: #f1f5f9 !important;
-}
-
-body.dark-mode .filter-input-wrapper.with-border input::placeholder {
-    color: #94a3b8 !important;
-    opacity: 0.7;
-}
-
-body.dark-mode .search-icon-fixed svg {
-    stroke: #94a3b8 !important;
-}
-
 .filter-select {
     min-width: 250px;
     padding: 12px 15px;
-    border: 1px solid var(--border-color);
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     background-color: white;
     font-size: 0.95rem;
@@ -263,7 +201,7 @@ body.dark-mode .search-icon-fixed svg {
     background-size: 16px;
     appearance: none;
     -webkit-appearance: none;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .filter-select:focus {
@@ -297,7 +235,7 @@ body.dark-mode .search-icon-fixed svg {
     box-shadow: 0 4px 12px rgba(10, 164, 164, 0.25);
 }
 
-/* Force hide scrollbars everywhere (Crucial fix) */
+/* Force hide scrollbars everywhere */
 html,
 body {
     overflow: hidden !important;
@@ -319,7 +257,6 @@ body {
     height: 100vh;
 }
 
-
 /* ── Custom Select Component ── */
 .custom-select-container {
     position: relative;
@@ -340,7 +277,7 @@ body {
     user-select: none;
     font-size: 0.95rem;
     color: #1E293B;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .custom-select-trigger:hover {
@@ -374,7 +311,6 @@ body {
     max-height: 300px;
     overflow-y: auto;
     animation: slideDown 0.2s ease-out;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 @keyframes slideDown {
@@ -408,26 +344,6 @@ body {
     background-color: rgba(10, 164, 164, 0.05) !important;
     color: #0AA4A4 !important;
     font-weight: 600;
-}
-
-/* Dark Mode support */
-body.dark-mode .custom-select-trigger {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #f1f5f9 !important;
-}
-
-body.dark-mode .custom-select-options {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-}
-
-body.dark-mode .custom-option {
-    color: #cbd5e1 !important;
-}
-
-body.dark-mode .custom-option:hover {
-    background-color: #334155 !important;
 }
 
 /* ── Responsive ── */

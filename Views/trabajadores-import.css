@@ -6,13 +6,11 @@
 .import-section { max-width: 800px; margin: 0 auto; }
 
 .import-card {
-    background: var(--bg-container-solid);
+    background: #ffffff;
     padding: 40px;
     border-radius: var(--radius-xl);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
-
-body.dark-mode .import-card { background: var(--bg-white); }
 
 .import-card h2 {
     font-size: 24px;
@@ -204,7 +202,7 @@ body.dark-mode .import-card { background: var(--bg-white); }
 
 .error-item {
     padding: 10px;
-    background: var(--bg-container-solid);
+    background: #ffffff;
     border-left: 4px solid var(--color-danger);
     border-radius: 4px;
     margin-bottom: 8px;
@@ -212,8 +210,6 @@ body.dark-mode .import-card { background: var(--bg-white); }
     gap: 8px;
     flex-wrap: wrap;
 }
-
-body.dark-mode .error-item { background: var(--bg-white); }
 
 .error-row { font-family: monospace; font-size: 13px; color: var(--text-muted); font-weight: 600; }
 .error-dni  { font-family: monospace; font-size: 12px; color: var(--text-light); }
