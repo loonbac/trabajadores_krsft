@@ -1,43 +1,52 @@
 /* ============================================
    TRABAJADORES - MODAL (floating form modal)
    Core deps: Bytewave-theme.css, modules-modal.css
-   v3.1.35: Modal con fondo blanco sólido, sin dark mode
+   v3.2.0: Modal con fondo blanco sólido, sin dark mode
    ============================================ */
 
+/* ── Modal Overlay override (z-index above container z-index:10) ── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+}
+
+/* ── Animations ── */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ── Modal Container ── */
 .modal-container {
     position: relative;
     width: 100%;
     max-width: 900px;
     max-height: 90vh;
-    animation: slideIn 0.3s ease;
-}
-
-.modal-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 32px;
-    height: 32px;
-    background: #ef4444;
-    color: white;
-    border: 1px solid #dc2626;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-    transition: all 0.2s ease;
-}
-
-.modal-close:hover {
-    background: #dc2626;
-    transform: scale(1.05);
-}
-
-.modal-close svg {
-    width: 20px;
-    height: 20px;
+    animation: slideIn 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
 /* Modal principal — fondo blanco sólido */
@@ -46,39 +55,77 @@
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    max-height: 85vh;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    max-height: 88vh;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
     border: 1px solid #d1d5db;
-    overflow: hidden !important;
-    padding: 0 !important;
+    overflow: hidden;
+    padding: 0;
 }
 
+/* ── Modal Header — row layout with close button ── */
 .modal-header {
-    padding: 24px 40px;
+    padding: 20px 28px;
     border-bottom: 1px solid #e2e8f0;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    text-align: left;
+    justify-content: space-between;
     background: #ffffff;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.modal-header-text {
+    display: flex;
+    flex-direction: column;
     gap: 3px;
 }
 
 .modal-header h2 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: #1e293b;
-    margin: 0 !important;
+    margin: 0;
 }
 
 .modal-header .form-subtitle {
-    margin: 0 !important;
-    font-size: 14px;
+    margin: 0;
+    font-size: 13px;
     color: #64748b;
 }
 
+/* ── Modal Close Button ── */
+.modal-close-btn {
+    width: 34px;
+    height: 34px;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    margin-top: 2px;
+}
+
+.modal-close-btn:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #dc2626;
+    transform: scale(1.05);
+}
+
+.modal-close-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ── Modal Body ── */
 .modal-body {
-    padding: 30px 40px;
+    padding: 28px 32px;
     overflow-y: auto;
     flex: 1;
     background: #ffffff;
@@ -91,8 +138,8 @@
     width: 100%;
     max-width: 450px;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+    animation: zoomIn 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
     border-radius: 16px;
     font-size: 14px;
     border: 1px solid #d1d5db;
@@ -107,7 +154,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 24px auto;
+    margin: 0 auto 20px auto;
 }
 
 .delete-modal-icon svg {
@@ -119,13 +166,13 @@
     font-size: 22px;
     font-weight: 700;
     color: #1e293b;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .delete-modal-card p {
     color: #64748b;
     line-height: 1.6;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
 }
 
 .delete-modal-actions {
@@ -138,11 +185,12 @@
     justify-content: center;
 }
 
+/* ── Danger Button ── */
 .btn-danger {
     background: #ef4444;
     color: white;
     border: none;
-    padding: 14px 28px;
+    padding: 12px 24px;
     border-radius: 8px;
     font-weight: 600;
     font-size: 14px;
@@ -156,19 +204,12 @@
 .btn-danger:hover:not(:disabled) {
     background: #dc2626;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
-@keyframes zoomIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+.btn-danger:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 /* ── Responsive ── */
@@ -177,14 +218,11 @@
         max-width: 100%;
     }
 
-    .modal-form-card {
+    .modal-body {
         padding: 20px;
     }
 
-    .modal-close {
-        top: -8px;
-        right: -8px;
-        width: 36px;
-        height: 36px;
+    .modal-header {
+        padding: 16px 20px;
     }
 }

@@ -1,7 +1,8 @@
-import React from 'react';
+import { memo } from 'react';
 import { EditIcon, TrashIcon, TeamIcon } from './Icons';
 
-export default function TrabajadoresTable({
+// ── Memoized table component (rerender-memo: extract expensive work into memoized components) ──
+const TrabajadoresTable = memo(function TrabajadoresTable({
     trabajadores,
     loading,
     onEdit,
@@ -54,7 +55,9 @@ export default function TrabajadoresTable({
                                         {getInitials(t)}
                                     </div>
                                     <div className="worker-details">
-                                        <div className="worker-name">{t.nombre_completo || `${t.apellido_paterno} ${t.apellido_materno}, ${t.nombres}`}</div>
+                                        <div className="worker-name">
+                                            {t.nombre_completo || `${t.apellido_paterno} ${t.apellido_materno || ''}, ${t.nombres}`.trim()}
+                                        </div>
                                         <div className="worker-meta">{t.email || 'Sin email'}</div>
                                     </div>
                                 </div>
@@ -93,4 +96,6 @@ export default function TrabajadoresTable({
             </table>
         </div>
     );
-}
+});
+
+export default TrabajadoresTable;

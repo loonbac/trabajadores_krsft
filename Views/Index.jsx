@@ -67,6 +67,9 @@ function loadFromCache(key) {
   return null;
 }
 
+// ── Static JSX hoisted outside component (rendering-hoist-jsx) ──
+const SPINNER_SMALL = <span className="spinner-small" />;
+
 // ══════════════════════════════════════════════
 // COMPONENT
 // ══════════════════════════════════════════════
@@ -96,7 +99,6 @@ export default function TrabajadoresIndex() {
 
   // Refs
   const fileInputRef = useRef(null);
-  const searchTimeoutRef = useRef(null);
   const pollingRef = useRef(null);
   const trabajadoresRef = useRef(trabajadores);
   const statsRef = useRef(stats);
@@ -192,11 +194,6 @@ export default function TrabajadoresIndex() {
   }, [loadTrabajadores, loadStats]);
 
   // ── Form helpers ──
-  const resetForm = useCallback(() => {
-    setForm({ ...DEFAULT_FORM });
-    setEditingId(null);
-  }, []);
-
   const openCreateModal = useCallback(() => {
     setForm({ ...DEFAULT_FORM });
     setEditingId(null);
@@ -214,18 +211,12 @@ export default function TrabajadoresIndex() {
     setForm(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  // ── Search debounce ──
+  // ── Search / filter handlers ──
   const handleSearchInput = useCallback((e) => {
     setSearchQuery(e.target.value);
   }, []);
 
-  const handleCargoFilter = useCallback((e) => {
-    setFilterCargo(e.target.value);
-  }, []);
-
   // ── Actions ──
-  const goBack = useCallback(() => { window.location.href = '/'; }, []);
-
   const editTrabajador = useCallback((t) => {
     setEditingId(t.id);
     setForm({ ...t });
@@ -377,6 +368,18 @@ export default function TrabajadoresIndex() {
     setImporting(false);
   }, [selectedFile, showToast, loadTrabajadores, loadStats]);
 
+  // ── Overlay click handlers ──
+  const handleModalOverlayClick = useCallback((e) => {
+    if (e.target === e.currentTarget) closeModal();
+  }, [closeModal]);
+
+  const handleDeleteOverlayClick = useCallback((e) => {
+    if (e.target === e.currentTarget) closeDeleteModal();
+  }, [closeDeleteModal]);
+
+  // ── Drag handlers ──
+  const handleDragOver = useCallback((e) => { e.preventDefault(); setDragging(true); }, []);
+  const handleDragLeave = useCallback(() => setDragging(false), []);
 
   // ══════════════════════════════════════════════
   // RENDER
@@ -388,7 +391,7 @@ export default function TrabajadoresIndex() {
 
       {/* Main Container */}
       <div className="trabajadores-container">
-        {/* Header — reuses .module-header, .header-left, .btn-back from core */}
+        {/* Header */}
         <header className="module-header">
           <div className="header-left">
             <button onClick={() => window.history.back()} className="btn-back" title="Volver">
@@ -405,11 +408,10 @@ export default function TrabajadoresIndex() {
               </div>
             </div>
           </div>
-          <div className="header-right">
-          </div>
+          <div className="header-right" />
         </header>
 
-        {/* Tabs — reuses .tabs-container, .tab-button from core */}
+        {/* Tabs */}
         <div className="tabs-container">
           <button
             onClick={() => setActiveTab('list')}
@@ -431,7 +433,7 @@ export default function TrabajadoresIndex() {
         <main className="module-content">
           {/* ── TAB: LISTADO ── */}
           <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
-            {/* Stats Cards — reuses .stats-grid, .stat-card, .stat-icon from core */}
+            {/* Stats Cards */}
             <div className="stats-grid">
               <div className="stat-card stat-total">
                 <div className="stat-icon stat-icon-white">
@@ -520,11 +522,7 @@ export default function TrabajadoresIndex() {
                       <h3>Descargar Plantilla</h3>
                       <p>Descarga la plantilla Excel con el formato requerido</p>
                       <button onClick={downloadTemplate} disabled={downloadingTemplate} className="btn-download">
-                        {downloadingTemplate ? (
-                          <span className="spinner-small" />
-                        ) : (
-                          DownloadIcon
-                        )}
+                        {downloadingTemplate ? SPINNER_SMALL : DownloadIcon}
                         {downloadingTemplate ? 'Descargando...' : 'Descargar Plantilla'}
                       </button>
                     </div>
@@ -553,11 +551,17 @@ export default function TrabajadoresIndex() {
 
                       <div
                         className={`upload-area${dragging ? ' dragging' : ''}`}
-                        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-                        onDragLeave={() => setDragging(false)}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
                       >
-                        <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleFileSelect} style={{ display: 'none' }} />
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".xlsx,.xls"
+                          onChange={handleFileSelect}
+                          style={{ display: 'none' }}
+                        />
                         {selectedFile ? (
                           <div className="upload-file-info">
                             {FileIcon}
@@ -577,8 +581,8 @@ export default function TrabajadoresIndex() {
                       </div>
 
                       {selectedFile ? (
-                        <button onClick={importExcel} disabled={importing || !selectedFile} className="btn-import">
-                          {importing ? <span className="spinner-small" /> : UploadIcon}
+                        <button onClick={importExcel} disabled={importing} className="btn-import">
+                          {importing ? SPINNER_SMALL : UploadIcon}
                           {importing ? 'Importando...' : 'Comenzar Importación'}
                         </button>
                       ) : null}
@@ -618,19 +622,31 @@ export default function TrabajadoresIndex() {
         </main>
       </div>
 
-      {/* Toast — reuses .toast from core modules-modal.css */}
+      {/* Toast */}
       {toast.show ? (
         <div className={`toast ${toast.type}`}>{toast.message}</div>
       ) : null}
 
       {/* ── MODAL: CREAR/EDITAR ── */}
       {showModal ? (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
+        <div className="modal-overlay" onClick={handleModalOverlayClick}>
           <div className="modal-container">
             <div className="modal-form-card">
+              {/* Header with close button */}
               <div className="modal-header">
-                <h2>{editingId ? 'Editar Trabajador' : 'Nuevo Trabajador'}</h2>
-                <p className="form-subtitle">Complete los campos requeridos (*) para registrar al trabajador.</p>
+                <div className="modal-header-text">
+                  <h2>{editingId ? 'Editar Trabajador' : 'Nuevo Trabajador'}</h2>
+                  <p className="form-subtitle">Complete los campos requeridos (*) para registrar al trabajador.</p>
+                </div>
+                <button
+                  type="button"
+                  className="modal-close-btn"
+                  onClick={closeModal}
+                  title="Cerrar"
+                  aria-label="Cerrar modal"
+                >
+                  {CloseIcon}
+                </button>
               </div>
 
               <div className="modal-body">
@@ -639,7 +655,7 @@ export default function TrabajadoresIndex() {
                   <div className="form-section-title">Datos Personales</div>
                   <div className="form-grid">
                     <div className="form-group">
-                      <label>DNI/CE *</label>
+                      <label>DNI / CE *</label>
                       <input name="dni" value={form.dni} onChange={handleFormChange} type="text" maxLength="12" required placeholder="12345678" />
                     </div>
                     <div className="form-group">
@@ -759,9 +775,11 @@ export default function TrabajadoresIndex() {
 
                   {/* Actions */}
                   <div className="form-actions">
-                    <button type="button" onClick={closeModal} className="btn-secondary">Cancelar</button>
+                    <button type="button" onClick={closeModal} className="btn-secondary">
+                      Cancelar
+                    </button>
                     <button type="submit" disabled={saving} className="btn-primary">
-                      {saving ? <span className="spinner-small" /> : null}
+                      {saving ? SPINNER_SMALL : null}
                       {saving ? 'Guardando...' : (editingId ? 'Actualizar' : 'Registrar')}
                     </button>
                   </div>
@@ -774,14 +792,15 @@ export default function TrabajadoresIndex() {
 
       {/* ── MODAL: CONFIRM ELIMINAR ── */}
       {showDeleteModal ? (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) closeDeleteModal(); }}>
+        <div className="modal-overlay" onClick={handleDeleteOverlayClick}>
           <div className="delete-modal-card">
             <div className="delete-modal-icon">
               {XCircleIcon}
             </div>
             <h2>¿Estás seguro?</h2>
             <p>
-              Estás a punto de eliminar a <strong>{itemToDelete?.nombre_completo || itemToDelete?.nombres}</strong>.
+              Estás a punto de eliminar a{' '}
+              <strong>{itemToDelete?.nombre_completo || itemToDelete?.nombres}</strong>.
               Esta acción no se puede deshacer.
             </p>
             <div className="delete-modal-actions">
@@ -789,7 +808,7 @@ export default function TrabajadoresIndex() {
                 Cancelar
               </button>
               <button onClick={handleDeleteConfirmed} className="btn-danger" disabled={deleting}>
-                {deleting ? <span className="spinner-small" /> : null}
+                {deleting ? SPINNER_SMALL : null}
                 {deleting ? 'Eliminando...' : 'Sí, eliminar'}
               </button>
             </div>
