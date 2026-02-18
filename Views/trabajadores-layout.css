@@ -1,7 +1,7 @@
 /* ============================================
    TRABAJADORES - LAYOUT (module-specific)
    Core deps: Bytewave-theme.css, modules-layout.css
-   v3.1.35: Fondo plano teal, contenedor blanco sólido, sin dark mode
+   v3.2.0: Fondo plano teal, contenedor blanco sólido, sin dark mode
    ============================================ */
 
 /* Viewport container */
@@ -393,6 +393,78 @@ body {
     font-weight: 600;
 }
 
+/* ── Module Header Override (reset global margin for fixed container) ── */
+.trabajadores-container .module-header {
+    margin-bottom: 0;
+    padding: 16px 0 16px 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+/* ── Tabs Container Override ── */
+.trabajadores-container .tabs-container {
+    margin-bottom: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 4px;
+    flex-shrink: 0;
+}
+
+.trabajadores-container .tab-button {
+    border-radius: 7px;
+    font-size: 0.9rem;
+    padding: 8px 18px;
+}
+
+/* ── Toast Notification ── */
+.toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    z-index: 2000;
+    animation: toastSlideIn 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    max-width: 380px;
+    line-height: 1.4;
+}
+
+.toast.success {
+    background: #10b981;
+}
+
+.toast.error {
+    background: #ef4444;
+}
+
+.toast.info {
+    background: #3b82f6;
+}
+
+.toast.warning {
+    background: #f59e0b;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
     .filters-container-row {
@@ -402,5 +474,21 @@ body {
 
     .filter-select {
         min-width: auto;
+    }
+
+    .trabajadores-container {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .toast {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        max-width: none;
     }
 }
