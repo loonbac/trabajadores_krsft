@@ -95,7 +95,7 @@
     animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     border-radius: 16px;
     font-size: 14px;
-    border: 2px solid #ef4444;
+    border: 1px solid #d1d5db;
 }
 
 .delete-modal-icon {

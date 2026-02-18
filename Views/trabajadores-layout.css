@@ -84,10 +84,16 @@ svg {
 
 .btn-icon svg,
 .tab-button svg,
-.stat-icon svg,
 .btn-new-worker svg {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
+    transition: stroke 0.2s ease, fill 0.2s ease, color 0.2s ease;
+}
+
+.stat-icon svg {
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
     transition: stroke 0.2s ease, fill 0.2s ease, color 0.2s ease;
 }
