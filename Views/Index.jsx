@@ -510,6 +510,7 @@ export default function TrabajadoresIndex() {
             <div className="import-section">
               <div className="import-card">
                 <h2>Importación Masiva de Trabajadores</h2>
+                <p>Sigue estos 3 pasos para importar múltiples trabajadores a la vez</p>
 
                 <div className="steps-container">
                   {/* Step 1 */}
