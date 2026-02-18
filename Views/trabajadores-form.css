@@ -51,7 +51,7 @@
 .form-group select,
 .form-group textarea {
     padding: 12px 14px;
-    border: 1px solid var(--border-color);
+    border: 1.5px solid #d1d5db;
     border-radius: 10px;
     font-size: 14px;
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
