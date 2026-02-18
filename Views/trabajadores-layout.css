@@ -99,16 +99,36 @@ svg {
 }
 
 /* ── Stats Adjustments ── */
+.stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
 .stat-card {
     box-shadow: none !important;
     border: 1px solid #e2e8f0;
     cursor: default;
     background: #ffffff;
+    padding: 1rem;
 }
 
 .stat-card:hover {
     transform: none !important;
     box-shadow: none !important;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+}
+
+.stat-content h3 {
+    font-size: 0.7rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
 }
 
 .stat-card.stat-total .stat-icon {
