@@ -4,17 +4,12 @@
 
 /* ── Container & Global ── */
 .table-container {
-    background: var(--bg-container-solid);
+    background: #ffffff;
     border-radius: var(--radius-xl);
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-body.dark-mode .table-container {
-    background: var(--bg-white);
-    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .table-responsive {
@@ -47,7 +42,6 @@ body.dark-mode .table-container {
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-
 .table-row:last-child td {
     border-bottom: none;
 }
@@ -67,7 +61,7 @@ body.dark-mode .table-container {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: #0AA4A4;
     color: white;
     display: flex;
     align-items: center;
@@ -78,10 +72,6 @@ body.dark-mode .table-container {
     box-shadow: 0 4px 10px rgba(10, 164, 164, 0.2);
     border: 2px solid white;
     transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-body.dark-mode .worker-avatar {
-    border-color: var(--bg-white);
 }
 
 .worker-details {
@@ -165,7 +155,7 @@ body.dark-mode .worker-avatar {
     height: 38px;
     border-radius: 10px;
     border: 1px solid var(--border-color);
-    background: var(--bg-container-solid);
+    background: #ffffff;
     color: var(--text-gray);
     display: flex;
     align-items: center;
@@ -229,7 +219,7 @@ body.dark-mode .worker-avatar {
 
 /* ── Filter Bar refinements ── */
 .filters-container {
-    background: var(--bg-container-solid);
+    background: #ffffff;
     padding: 24px;
     border-radius: var(--radius-xl);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -282,35 +272,11 @@ body.dark-mode .worker-avatar {
     padding: 0 16px;
     border-radius: 12px;
     border: 1px solid var(--border-color);
-    background: var(--input-solid-bg);
+    background: #ffffff;
     color: var(--text-dark);
     font-size: 0.875rem;
     cursor: pointer;
 }
 
 /* ── Dark Mode Overrides (v3.1.32) ── */
-body.dark-mode .table-container {
-    background: var(--bg-container-solid) !important;
-    border-color: rgba(255, 255, 255, 0.05) !important;
-}
 
-body.dark-mode .data-table td {
-    color: #f1f5f9 !important;
-    border-bottom-color: rgba(255, 255, 255, 0.03) !important;
-}
-
-body.dark-mode .worker-name,
-body.dark-mode .mono-text,
-body.dark-mode .cargo-type {
-    color: #f1f5f9 !important;
-}
-
-body.dark-mode .worker-meta {
-    color: #cbd5e1 !important;
-}
-
-body.dark-mode .actions-group .btn-icon {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #f1f5f9;
-}

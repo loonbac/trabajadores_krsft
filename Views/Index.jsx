@@ -7,9 +7,9 @@ import './trabajadores-form.css';
 import './trabajadores-import.css';
 import './trabajadores-modal.css';
 
-// ── Components ──
+// ── Components ─
 import {
-  BackIcon, SunIcon, MoonIcon, ListIcon, UploadIcon,
+  BackIcon, ListIcon, UploadIcon,
   SearchIcon, PlusIcon, TeamIcon, StatUsersIcon,
   CheckCircleIcon, XCircleIcon, DownloadIcon, FileIcon, CloseIcon
 } from './components/Icons';
@@ -178,10 +178,6 @@ export default function TrabajadoresIndex() {
 
   // ── Lifecycle: mount + polling (async-parallel: fetch both in parallel) ──
   useEffect(() => {
-    if (localStorage.getItem('trabajadores-dark-mode') === 'true') {
-      document.body.classList.add('dark-mode');
-    }
-
     const hasCache = trabajadoresRef.current.length > 0;
     // Parallel fetch on mount
     Promise.all([loadTrabajadores(!hasCache), loadStats()]);
@@ -228,12 +224,6 @@ export default function TrabajadoresIndex() {
   }, []);
 
   // ── Actions ──
-  const toggleDarkMode = useCallback(() => {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('trabajadores-dark-mode', isDark ? 'true' : 'false');
-  }, []);
-
   const goBack = useCallback(() => { window.location.href = '/'; }, []);
 
   const editTrabajador = useCallback((t) => {
@@ -416,10 +406,6 @@ export default function TrabajadoresIndex() {
             </div>
           </div>
           <div className="header-right">
-            <button onClick={() => {/* toggle dark mode logic is usually handled by platform, but we have theme-toggle classes */ document.body.classList.toggle('dark-mode') }} className="theme-toggle" title="Cambiar tema">
-              {SunIcon}
-              {MoonIcon}
-            </button>
           </div>
         </header>
 
