@@ -40,6 +40,15 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
 }
 
+/* ── Module Content Override ── */
+.trabajadores-layout .module-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    min-height: 0;
+}
+
 /* ── Header Improvements ── */
 .module-title {
     display: flex;
