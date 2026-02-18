@@ -48,6 +48,7 @@
     flex-direction: column;
     max-height: 85vh;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    border: 2px solid #0AA4A4;
     overflow: hidden !important;
     padding: 0 !important;
 }
@@ -94,7 +95,7 @@
     animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     border-radius: 16px;
     font-size: 14px;
-    border: 1px solid #e2e8f0;
+    border: 2px solid #ef4444;
 }
 
 .delete-modal-icon {

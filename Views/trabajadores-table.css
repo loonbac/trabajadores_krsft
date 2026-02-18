@@ -8,12 +8,18 @@
     border-radius: var(--radius-xl);
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid #d1d5db;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .table-responsive {
     overflow-x: auto;
+    overflow-y: auto;
+    flex: 1;
+    max-height: 100%;
 }
 
 /* ── Data Table Structure ── */
