@@ -5,7 +5,7 @@
 /* ── Container & Global ── */
 .table-container {
     background: #ffffff;
-    border-radius: var(--radius-xl);
+    border-radius: 16px;
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     border: 1px solid #d1d5db;
@@ -42,19 +42,19 @@
 }
 
 .data-table th:first-child {
-    border-top-left-radius: var(--radius-xl);
+    border-top-left-radius: 0;
 }
 
 .data-table th:last-child {
-    border-top-right-radius: var(--radius-xl);
+    border-top-right-radius: 0;
 }
 
 .data-table tbody tr:last-child td:first-child {
-    border-bottom-left-radius: var(--radius-xl);
+    border-bottom-left-radius: 0;
 }
 
 .data-table tbody tr:last-child td:last-child {
-    border-bottom-right-radius: var(--radius-xl);
+    border-bottom-right-radius: 0;
 }
 
 .data-table td {
