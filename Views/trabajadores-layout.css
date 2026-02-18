@@ -129,6 +129,18 @@ svg {
     color: white !important;
 }
 
+/* ── Tab styling for Import Excel ── */
+.tab-button[class*="tab-active"]:has(svg[data-icon="upload"]),
+.tabs-container .tab-button:nth-child(2).tab-active {
+    background: #10b981 !important;
+    color: white !important;
+    border-color: #10b981 !important;
+}
+
+.tabs-container .tab-button:nth-child(2).tab-active svg {
+    color: white !important;
+}
+
 /* ── Filter Row Alignment ── */
 .filters-container-row {
     display: flex;

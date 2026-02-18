@@ -3,44 +3,75 @@
    Core deps: Bytewave-theme.css
    ============================================ */
 
-.import-section { max-width: 800px; margin: 0 auto; }
+.import-section { max-width: 900px; margin: 0 auto; }
 
 .import-card {
     background: #ffffff;
-    padding: 40px;
+    padding: 32px;
     border-radius: var(--radius-xl);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
 }
 
 .import-card h2 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--text-dark);
-    margin: 0 0 30px 0;
+    margin: 0 0 8px 0;
+    text-align: center;
+}
+
+.import-card > p {
+    text-align: center;
+    color: var(--text-gray);
+    margin: 0 0 32px 0;
+    font-size: 14px;
 }
 
 /* ── Steps ── */
-.steps-container { display: flex; flex-direction: column; gap: 30px; }
+.steps-container { 
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
 
-.step { display: flex; gap: 20px; }
+.step { 
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.step:hover {
+    border-color: #0AA4A4;
+    box-shadow: 0 4px 12px rgba(10, 164, 164, 0.1);
+}
 
 .step-number {
-    width: 40px;
-    height: 40px;
-    background: var(--color-primary);
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #0AA4A4, #059669);
     color: white;
-    border-radius: 50%;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
+    font-size: 20px;
     flex-shrink: 0;
+    align-self: flex-start;
+    box-shadow: 0 4px 12px rgba(10, 164, 164, 0.2);
 }
 
 .step-content { flex: 1; }
 
 .step-content h3 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--text-dark);
     margin: 0 0 8px 0;
@@ -48,36 +79,43 @@
 
 .step-content p {
     color: var(--text-gray);
-    margin: 0 0 12px 0;
+    margin: 0 0 16px 0;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
-.step-list { list-style: none; padding: 0; margin: 12px 0 0 0; }
+.step-list { list-style: none; padding: 0; margin: 0; }
 
 .step-list li {
     color: var(--text-gray);
-    padding: 4px 0;
-    font-size: 14px;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.4;
 }
 
 /* ── Buttons ── */
 .btn-download {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 12px 24px;
-    background: var(--color-primary);
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
     border-radius: var(--radius-md);
     font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
     transition: var(--transition);
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .btn-download:hover:not(:disabled) {
-    background: var(--color-primary-dark);
+    background: linear-gradient(135deg, #059669, #047857);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-primary);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
 }
 
 .btn-download:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -85,18 +123,18 @@
 
 /* ── Upload area ── */
 .upload-area {
-    border: 2px dashed var(--border-color);
+    border: 2px dashed #d1d5db;
     border-radius: var(--radius-lg);
-    padding: 40px;
+    padding: 32px;
     text-align: center;
     transition: var(--transition);
-    background: var(--bg-light);
-    margin-top: 16px;
+    background: #ffffff;
+    margin-top: 0;
 }
 
 .upload-area.dragging {
-    border-color: var(--color-primary);
-    background: rgba(10, 164, 164, 0.05);
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.05);
 }
 
 .upload-placeholder { cursor: pointer; }
@@ -104,7 +142,7 @@
 .upload-placeholder svg {
     width: 48px;
     height: 48px;
-    color: var(--color-primary);
+    color: #10b981;
     margin-bottom: 16px;
 }
 
@@ -145,9 +183,10 @@
 .btn-import {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 14px 28px;
-    background: var(--color-primary);
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
     border-radius: var(--radius-md);
@@ -155,12 +194,14 @@
     cursor: pointer;
     transition: var(--transition);
     margin-top: 20px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .btn-import:hover:not(:disabled) {
-    background: var(--color-primary-dark);
+    background: linear-gradient(135deg, #059669, #047857);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-primary);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
 }
 
 .btn-import:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -214,3 +255,31 @@
 .error-row { font-family: monospace; font-size: 13px; color: var(--text-muted); font-weight: 600; }
 .error-dni  { font-family: monospace; font-size: 12px; color: var(--text-light); }
 .error-message { font-size: 14px; color: var(--color-danger); }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .steps-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .import-section {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .import-card {
+        padding: 24px 20px;
+    }
+    
+    .step {
+        padding: 20px;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+}
