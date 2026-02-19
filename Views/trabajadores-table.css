@@ -39,22 +39,22 @@
     text-align: left;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #1e293b;
+    color: white;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: #BAE6FD;
+    background: #0AA4A4;
     position: sticky;
     top: 0;
     z-index: 10;
-    box-shadow: 0 2px 4px rgba(10, 164, 164, 0.1);
+    box-shadow: 0 2px 8px rgba(10, 164, 164, 0.2);
 }
 
 .data-table th:first-child {
-    border-top-left-radius: 0;
+    padding-left: 24px;
 }
 
 .data-table th:last-child {
-    border-top-right-radius: 0;
+    padding-right: 24px;
 }
 
 .data-table tbody tr:last-child td:first-child {
