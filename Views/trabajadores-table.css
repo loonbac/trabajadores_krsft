@@ -21,9 +21,10 @@
     overflow-x: auto;
     overflow-y: auto;
     flex: 1;
-    max-height: 100%;
+    min-height: 0;
     background: #ffffff;
     border-radius: 15px;
+    position: relative;
 }
 
 /* ── Data Table Structure ── */
@@ -43,6 +44,9 @@
     letter-spacing: 0.05em;
     background: var(--bg-light);
     border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .data-table th:first-child {
