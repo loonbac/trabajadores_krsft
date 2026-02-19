@@ -4,6 +4,7 @@
     "display_name": "TRABAJADORES",
     "version": "3.2.8",
     "description": "v3.2.8: Header tabla en cyan #0AA4A4 con texto blanco",
+    "icon": "icon.svg",
     "color": "#fb923c",
     "gradient": "linear-gradient(135deg, #0AA4A4, #2F6FBF)",
     "author": "loonbac21, insent1209, yokonad",
