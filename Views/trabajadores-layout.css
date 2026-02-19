@@ -286,26 +286,51 @@ svg {
     box-shadow: 0 4px 12px rgba(10, 164, 164, 0.25);
 }
 
-/* Force hide scrollbars everywhere */
+/* Hide scrollbars only on main layout and body */
 html,
 body {
     overflow: hidden !important;
 }
 
-::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-}
-
-* {
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+.trabajadores-layout,
+.trabajadores-bg,
+.trabajadores-container {
+    overflow: hidden !important;
 }
 
 .trabajadores-layout {
-    overflow: hidden !important;
     width: 100vw;
     height: 100vh;
+}
+
+/* Allow scrollbars on table and modal but hide the scrollbar UI */
+.table-responsive::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track,
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover,
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.table-responsive,
+.modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
 /* ── Custom Select Component ── */
