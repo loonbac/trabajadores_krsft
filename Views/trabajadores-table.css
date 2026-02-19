@@ -39,14 +39,15 @@
     text-align: left;
     font-size: 0.75rem;
     font-weight: 700;
-    color: var(--text-gray);
+    color: #1e293b;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: var(--bg-light);
-    border-bottom: 1px solid var(--border-color);
+    background: #E0F5F5;
+    border-bottom: 2px solid #0AA4A4;
     position: sticky;
     top: 0;
     z-index: 10;
+    box-shadow: 0 2px 4px rgba(10, 164, 164, 0.1);
 }
 
 .data-table th:first-child {
