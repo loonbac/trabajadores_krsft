@@ -432,7 +432,12 @@ export default function TrabajadoresIndex() {
         {/* Main Content */}
         <main className="module-content">
           {/* ── TAB: LISTADO ── */}
-          <div style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
+          <div style={{
+            display: activeTab === 'list' ? 'flex' : 'none',
+            flexDirection: 'column',
+            flex: 1,
+            minHeight: 0,
+          }}>
             {/* Stats Cards */}
             <div className="stats-grid">
               <div className="stat-card stat-total">
