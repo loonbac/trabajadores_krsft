@@ -2,6 +2,7 @@
  * TrabajadoresIndex – Orchestrator (HyperUI layout).
  * All state lives in useTrabajadoresData hook; UI in modular components.
  */
+import { usePage } from '@inertiajs/react';
 import {
     UserGroupIcon, CheckCircleIcon, XCircleIcon,
     PlusIcon, ListBulletIcon, ArrowUpTrayIcon,
@@ -24,7 +25,9 @@ import WorkerFormModal     from './Components/modals/WorkerFormModal';
 import DeleteConfirmModal  from './Components/modals/DeleteConfirmModal';
 
 export default function TrabajadoresIndex() {
-    const d = useTrabajadoresData();
+    const { auth } = usePage().props;
+    const d = useTrabajadoresData(auth);
+    const showImportTab = d.permissions.import || d.permissions.export;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -36,10 +39,12 @@ export default function TrabajadoresIndex() {
                     subtitle="Administre el personal y la información laboral"
                     icon={<UserGroupIcon className="size-7" />}
                 >
-                    <Button variant="primary" onClick={d.openCreateModal} className="gap-2">
-                        <PlusIcon className="size-5" />
-                        Nuevo Trabajador
-                    </Button>
+                    {d.permissions.create && (
+                        <Button variant="primary" onClick={d.openCreateModal} className="gap-2">
+                            <PlusIcon className="size-5" />
+                            Nuevo Trabajador
+                        </Button>
+                    )}
                 </PageHeader>
 
                 {/* ── Stats ── */}
@@ -67,15 +72,17 @@ export default function TrabajadoresIndex() {
                         >
                             <ListBulletIcon className="size-4" /> Listado
                         </button>
-                        <button
-                            role="tab" aria-selected={d.activeTab === 'import'}
-                            onClick={() => d.setActiveTab('import')}
-                            className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                                d.activeTab === 'import' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            <ArrowUpTrayIcon className="size-4" /> Importar Excel
-                        </button>
+                        {showImportTab && (
+                            <button
+                                role="tab" aria-selected={d.activeTab === 'import'}
+                                onClick={() => d.setActiveTab('import')}
+                                className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                    d.activeTab === 'import' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                            >
+                                <ArrowUpTrayIcon className="size-4" /> Importar Excel
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -111,12 +118,15 @@ export default function TrabajadoresIndex() {
                             onEdit={d.editTrabajador}
                             onDelete={d.confirmDelete}
                             openCreateModal={d.openCreateModal}
+                            canCreate={d.permissions.create}
+                            canEdit={d.permissions.update}
+                            canDelete={d.permissions.delete}
                         />
                     </>
                 )}
 
                 {/* ── Import tab ── */}
-                {d.activeTab === 'import' && (
+                {showImportTab && d.activeTab === 'import' && (
                     <ImportTab
                         selectedFile={d.selectedFile}       setSelectedFile={d.setSelectedFile}
                         dragging={d.dragging}               importing={d.importing}
@@ -126,6 +136,8 @@ export default function TrabajadoresIndex() {
                         handleFileSelect={d.handleFileSelect}
                         handleDrop={d.handleDrop}           importExcel={d.importExcel}
                         handleDragOver={d.handleDragOver}   handleDragLeave={d.handleDragLeave}
+                        canImport={d.permissions.import}
+                        canExport={d.permissions.export}
                     />
                 )}
             </div>

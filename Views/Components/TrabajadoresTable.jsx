@@ -15,7 +15,7 @@ const ESTADO_VARIANT = {
     Licencia: 'blue',
 };
 
-const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loading, onEdit, onDelete, openCreateModal }) {
+const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loading, onEdit, onDelete, openCreateModal, canCreate, canEdit, canDelete }) {
     /* Loading */
     if (loading) {
         return (
@@ -36,10 +36,12 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
                 <UserGroupIcon className="mx-auto size-20 text-gray-300 mb-6" />
                 <h2 className="text-xl font-bold text-gray-900 mb-2">No hay trabajadores registrados</h2>
                 <p className="text-sm text-gray-500 mb-6">Comienza agregando el primer trabajador al sistema.</p>
-                <Button variant="primary" onClick={openCreateModal} className="w-full gap-2">
-                    <PlusIcon className="size-5" />
-                    Agregar primer trabajador
-                </Button>
+                {canCreate && (
+                    <Button variant="primary" onClick={openCreateModal} className="w-full gap-2">
+                        <PlusIcon className="size-5" />
+                        Agregar primer trabajador
+                    </Button>
+                )}
             </div>
         );
     }
@@ -90,20 +92,24 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
                             {/* Actions — HyperUI §8.2 Button Group */}
                             <td className="whitespace-nowrap px-4 py-3 text-center">
                                 <span className="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                                    <button
-                                        onClick={() => onEdit(t)}
-                                        className="inline-block border-e px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:relative"
-                                        title="Editar"
-                                    >
-                                        <PencilSquareIcon className="size-4" />
-                                    </button>
-                                    <button
-                                        onClick={() => onDelete(t)}
-                                        className="inline-block px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:relative"
-                                        title="Eliminar"
-                                    >
-                                        <TrashIcon className="size-4" />
-                                    </button>
+                                    {canEdit && (
+                                        <button
+                                            onClick={() => onEdit(t)}
+                                            className="inline-block border-e px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:relative"
+                                            title="Editar"
+                                        >
+                                            <PencilSquareIcon className="size-4" />
+                                        </button>
+                                    )}
+                                    {canDelete && (
+                                        <button
+                                            onClick={() => onDelete(t)}
+                                            className="inline-block px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:relative"
+                                            title="Eliminar"
+                                        >
+                                            <TrashIcon className="size-4" />
+                                        </button>
+                                    )}
                                 </span>
                             </td>
                         </tr>

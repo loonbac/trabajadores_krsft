@@ -100,6 +100,7 @@ class TrabajadorController extends Controller
                 'departamento' => $request->departamento,
                 'area_id' => $request->area_id,
                 'cargo' => $request->cargo,
+                'tipo_trabajador' => $request->tipo_trabajador ?? 'Administrativo',
                 'fecha_ingreso' => $request->fecha_ingreso,
                 'fecha_cese' => $request->fecha_cese,
                 'tipo_contrato' => $request->tipo_contrato ?? 'Indefinido',
@@ -147,7 +148,7 @@ class TrabajadorController extends Controller
                 'dni', 'nombres', 'apellido_paterno', 'apellido_materno',
                 'fecha_nacimiento', 'lugar_nacimiento', 'genero', 'estado_civil',
                 'sistema_pensiones', 'telefono', 'email', 'direccion',
-                'distrito', 'provincia', 'departamento', 'area_id', 'cargo',
+                'distrito', 'provincia', 'departamento', 'area_id', 'cargo', 'tipo_trabajador',
                 'fecha_ingreso', 'fecha_cese', 'tipo_contrato', 'estado',
                 'sueldo_basico', 'banco', 'numero_cuenta',
                 'tiene_antecedentes_penales', 'tiene_antecedentes_policiales',
@@ -220,7 +221,8 @@ class TrabajadorController extends Controller
             'A1' => 'APELLIDOS Y NOMBRES',
             'B1' => 'DNI',
             'C1' => 'CARGO',
-            'D1' => 'ESTADO'
+            'D1' => 'ESTADO',
+            'E1' => 'FECHA DE INGRESO'
         ];
 
         foreach ($headers as $cell => $value) {
@@ -241,19 +243,21 @@ class TrabajadorController extends Controller
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ],
         ];
-        $sheet->getStyle('A1:D1')->applyFromArray($headerStyle);
+        $sheet->getStyle('A1:E1')->applyFromArray($headerStyle);
 
         // Fila de ejemplo
         $sheet->setCellValue('A2', 'PEREZ GARCIA, JUAN CARLOS');
         $sheet->setCellValue('B2', '12345678');
         $sheet->setCellValue('C2', 'Analista de Sistemas');
         $sheet->setCellValue('D2', 'Activo');
+        $sheet->setCellValue('E2', date('d/m/Y'));
 
         // Fila de ejemplo 2 (cesado)
         $sheet->setCellValue('A3', 'LOPEZ RODRIGUEZ, MARIA');
         $sheet->setCellValue('B3', '87654321');
         $sheet->setCellValue('C3', 'Asistente Administrativo');
         $sheet->setCellValue('D3', 'Cesado');
+        $sheet->setCellValue('E3', '15/01/2025');
 
         // Validación de datos para columna ESTADO
         $validation = $sheet->getCell('D4')->getDataValidation();
@@ -273,6 +277,7 @@ class TrabajadorController extends Controller
         $sheet->getColumnDimension('B')->setWidth(12);
         $sheet->getColumnDimension('C')->setWidth(30);
         $sheet->getColumnDimension('D')->setWidth(12);
+        $sheet->getColumnDimension('E')->setWidth(16);
 
         // Crear archivo XLSX
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
@@ -369,6 +374,8 @@ class TrabajadorController extends Controller
                     $headerMap['cargo'] = $index;
                 } elseif (str_contains($col, 'estado')) {
                     $headerMap['estado'] = $index;
+                } elseif (str_contains($col, 'fecha') && str_contains($col, 'ingreso')) {
+                    $headerMap['fecha_ingreso'] = $index;
                 }
             }
 
@@ -390,6 +397,24 @@ class TrabajadorController extends Controller
                     $cargo = $row[$headerMap['cargo'] ?? 2] ?? null;
                     $cargo = !empty($cargo) ? trim($cargo) : null; // Allow empty CARGO
                     $estado = $row[$headerMap['estado'] ?? 3] ?? 'Activo';
+                    $fechaIngresoRaw = $row[$headerMap['fecha_ingreso'] ?? 4] ?? null;
+                    
+                    // Parse fecha de ingreso
+                    $fechaIngreso = now();
+                    if (!empty($fechaIngresoRaw)) {
+                        try {
+                            if (str_contains($fechaIngresoRaw, '/')) {
+                                $parts = explode('/', $fechaIngresoRaw);
+                                if (count($parts) === 3) {
+                                    $fechaIngreso = "{$parts[2]}-{$parts[1]}-{$parts[0]}";
+                                }
+                            } else {
+                                $fechaIngreso = date('Y-m-d', strtotime($fechaIngresoRaw));
+                            }
+                        } catch (\Exception $e) {
+                            $fechaIngreso = now();
+                        }
+                    }
                     
                     if (empty($dni) || empty($nombreCompleto)) {
                         throw new \Exception('Datos incompletos (DNI o Nombre)');
@@ -446,7 +471,7 @@ class TrabajadorController extends Controller
                         'nombre_completo' => $nombreCompleto,
                         'cargo' => $cargo,
                         'estado' => $estado,
-                        'fecha_ingreso' => now(),
+                        'fecha_ingreso' => $fechaIngreso,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);

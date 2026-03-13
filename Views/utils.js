@@ -9,7 +9,7 @@ export const CACHE_PREFIX = 'trabajadores_v1_';
 export const DEFAULT_FORM = {
   dni: '', nombres: '', apellido_paterno: '', apellido_materno: '',
   fecha_nacimiento: '', genero: 'M', estado_civil: 'Soltero',
-  telefono: '', email: '', direccion: '', cargo: '',
+  telefono: '', email: '', direccion: '', cargo: '', tipo_trabajador: 'Administrativo',
   fecha_ingreso: '', tipo_contrato: 'Indefinido', estado: 'Activo',
   sueldo_basico: '', sistema_pensiones: '',
   contacto_emergencia_nombre: '', contacto_emergencia_telefono: '',
@@ -41,6 +41,11 @@ export const ESTADO_OPTIONS = [
   { value: 'Cesado', label: 'Cesado' },
   { value: 'Vacaciones', label: 'Vacaciones' },
   { value: 'Licencia', label: 'Licencia' },
+];
+
+export const TIPO_TRABAJADOR_OPTIONS = [
+  { value: 'Administrativo', label: 'Administrativo' },
+  { value: 'Campo', label: 'Campo' },
 ];
 
 export const PENSIONES_OPTIONS = [

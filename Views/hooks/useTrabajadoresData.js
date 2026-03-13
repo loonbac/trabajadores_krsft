@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { hasPermission } from '@/utils/permissions';
 import {
   POLLING_MS, DEFAULT_FORM,
   getModuleName, getCsrfToken,
@@ -8,7 +9,7 @@ import {
 /**
  * useTrabajadoresData – All state, fetching, CRUD and handlers.
  */
-export function useTrabajadoresData() {
+export function useTrabajadoresData(auth) {
   /* ── Core state ── */
   const [trabajadores, setTrabajadores] = useState(() => loadFromCache('trabajadores') || []);
   const [stats, setStats] = useState(() => loadFromCache('stats') || { total: 0, activos: 0, inactivos: 0 });
@@ -48,6 +49,14 @@ export function useTrabajadoresData() {
 
   useEffect(() => { trabajadoresRef.current = trabajadores; }, [trabajadores]);
   useEffect(() => { statsRef.current = stats; }, [stats]);
+
+  const permissions = useMemo(() => ({
+    create: hasPermission(auth, 'module.trabajadoreskrsft.create'),
+    update: hasPermission(auth, 'module.trabajadoreskrsft.update'),
+    delete: hasPermission(auth, 'module.trabajadoreskrsft.delete'),
+    import: hasPermission(auth, 'module.trabajadoreskrsft.import'),
+    export: hasPermission(auth, 'module.trabajadoreskrsft.export'),
+  }), [auth]);
 
   /* ── Computed ── */
   const uniqueCargos = useMemo(() => {
@@ -138,14 +147,38 @@ export function useTrabajadoresData() {
   }, [loadTrabajadores, loadStats]);
 
   /* ── Modal handlers ── */
-  const openCreateModal = useCallback(() => { setForm({ ...DEFAULT_FORM }); setEditingId(null); setShowModal(true); }, []);
+  const openCreateModal = useCallback(() => {
+    if (!permissions.create) {
+      showToast('No tienes permiso para crear trabajadores', 'error');
+      return;
+    }
+
+    setForm({ ...DEFAULT_FORM });
+    setEditingId(null);
+    setShowModal(true);
+  }, [permissions.create, showToast]);
   const closeModal = useCallback(() => { setShowModal(false); setForm({ ...DEFAULT_FORM }); setEditingId(null); }, []);
-  const editTrabajador = useCallback((t) => { setEditingId(t.id); setForm({ ...t }); setShowModal(true); }, []);
+  const editTrabajador = useCallback((t) => {
+    if (!permissions.update) {
+      showToast('No tienes permiso para editar trabajadores', 'error');
+      return;
+    }
+
+    setEditingId(t.id);
+    setForm({ ...t });
+    setShowModal(true);
+  }, [permissions.update, showToast]);
   const handleFormChange = useCallback((e) => { const { name, value } = e.target; setForm(prev => ({ ...prev, [name]: value })); }, []);
 
   /* ── CRUD ── */
   const saveTrabajador = useCallback(async (e) => {
     e.preventDefault();
+
+    if ((editingId && !permissions.update) || (!editingId && !permissions.create)) {
+      showToast('No tienes permiso para guardar trabajadores', 'error');
+      return;
+    }
+
     setSaving(true);
     try {
       const url = editingId ? `${API}/${editingId}` : `${API}/create`;
@@ -160,13 +193,27 @@ export function useTrabajadoresData() {
       }
     } catch { showToast('Error de conexión', 'error'); }
     setSaving(false);
-  }, [editingId, form, showToast, closeModal, loadTrabajadores, loadStats]);
+  }, [editingId, form, permissions.create, permissions.update, showToast, closeModal, loadTrabajadores, loadStats]);
 
   /* ── Delete ── */
-  const confirmDelete = useCallback((t) => { setItemToDelete(t); setShowDeleteModal(true); }, []);
+  const confirmDelete = useCallback((t) => {
+    if (!permissions.delete) {
+      showToast('No tienes permiso para eliminar trabajadores', 'error');
+      return;
+    }
+
+    setItemToDelete(t);
+    setShowDeleteModal(true);
+  }, [permissions.delete, showToast]);
   const closeDeleteModal = useCallback(() => { setShowDeleteModal(false); setItemToDelete(null); }, []);
   const handleDeleteConfirmed = useCallback(async () => {
     if (!itemToDelete) return;
+
+    if (!permissions.delete) {
+      showToast('No tienes permiso para eliminar trabajadores', 'error');
+      return;
+    }
+
     setDeleting(true);
     try {
       const res = await fetch(`${API}/${itemToDelete.id}`, { method: 'DELETE', headers: hdrs() });
@@ -178,10 +225,15 @@ export function useTrabajadoresData() {
       } else { showToast(data.message || 'Error al eliminar', 'error'); }
     } catch { showToast('Error de conexión', 'error'); }
     setDeleting(false);
-  }, [itemToDelete, showToast, loadTrabajadores, loadStats]);
+  }, [itemToDelete, permissions.delete, showToast, loadTrabajadores, loadStats]);
 
   /* ── Import ── */
   const downloadTemplate = useCallback(async () => {
+    if (!permissions.export) {
+      showToast('No tienes permiso para exportar plantillas', 'error');
+      return;
+    }
+
     setDownloadingTemplate(true);
     try {
       const res = await fetch(`${API}/excel/template`, {
@@ -195,7 +247,7 @@ export function useTrabajadoresData() {
       showToast('Plantilla descargada correctamente');
     } catch { showToast('Error al descargar plantilla', 'error'); }
     setDownloadingTemplate(false);
-  }, [showToast]);
+  }, [permissions.export, showToast]);
 
   const handleFileSelect = useCallback((e) => { const f = e.target.files[0]; if (f) setSelectedFile(f); }, []);
 
@@ -207,6 +259,11 @@ export function useTrabajadoresData() {
   }, [showToast]);
 
   const importExcel = useCallback(async () => {
+    if (!permissions.import) {
+      showToast('No tienes permiso para importar trabajadores', 'error');
+      return;
+    }
+
     if (!selectedFile) { showToast('Por favor selecciona un archivo', 'error'); return; }
     setImporting(true); setImportResults(null);
     try {
@@ -220,7 +277,7 @@ export function useTrabajadoresData() {
       else showToast(`${results.imported} de ${results.total} registros importados`, 'info');
     } catch { showToast('Error al importar archivo', 'error'); }
     setImporting(false);
-  }, [selectedFile, showToast, loadTrabajadores, loadStats]);
+  }, [selectedFile, permissions.import, showToast, loadTrabajadores, loadStats]);
 
   const handleDragOver = useCallback((e) => { e.preventDefault(); setDragging(true); }, []);
   const handleDragLeave = useCallback(() => setDragging(false), []);
@@ -234,6 +291,7 @@ export function useTrabajadoresData() {
     showDeleteModal, itemToDelete, deleting,
     confirmDelete, handleDeleteConfirmed, closeDeleteModal,
     toast,
+    permissions,
     selectedFile, setSelectedFile, dragging, importing,
     downloadingTemplate, importResults, fileInputRef,
     downloadTemplate, handleFileSelect, handleDrop, importExcel,

@@ -8,6 +8,7 @@ import Button from '../ui/Button';
 import {
     GENERO_OPTIONS, ESTADO_CIVIL_OPTIONS,
     TIPO_CONTRATO_OPTIONS, ESTADO_OPTIONS, PENSIONES_OPTIONS,
+    TIPO_TRABAJADOR_OPTIONS,
 } from '../../utils';
 
 function SectionDivider({ label }) {
@@ -59,6 +60,7 @@ export default function WorkerFormModal({ show, onClose, editingId, form, onChan
                 <SectionDivider label="Datos Laborales" />
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
                     <Input label="Cargo" name="cargo" value={form.cargo || ''} onChange={onChange} required placeholder="Analista" />
+                    <Select label="Tipo Trabajador" name="tipo_trabajador" value={form.tipo_trabajador || 'Administrativo'} onChange={onChange} options={TIPO_TRABAJADOR_OPTIONS} placeholder="" />
                     <Input label="Fecha de Ingreso" name="fecha_ingreso" value={form.fecha_ingreso || ''} onChange={onChange} type="date" required />
                     <Select label="Tipo de Contrato" name="tipo_contrato" value={form.tipo_contrato} onChange={onChange} options={TIPO_CONTRATO_OPTIONS} placeholder="" />
                     <Select label="Estado" name="estado" value={form.estado} onChange={onChange} options={ESTADO_OPTIONS} placeholder="" />

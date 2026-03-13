@@ -9,5 +9,14 @@
     "gradient": "#fb923c",
     "author": "loonbac21, insent1209, yokonad",
     "enabled": true,
-    "dependencies": []
+    "dependencies": [],
+    "permissions": [
+        { "action": "access", "display_name": "Trabajadores: Acceder", "description": "Permite ver el módulo de Trabajadores en el dashboard y acceder a su página principal" },
+        { "action": "view", "display_name": "Trabajadores: Ver", "description": "Permite visualizar la tabla de trabajadores, sus datos personales, cargo, estado y estadísticas generales" },
+        { "action": "create", "display_name": "Trabajadores: Crear", "description": "Habilita el botón «Agregar» para registrar nuevos trabajadores con datos personales, cargo y documentos" },
+        { "action": "update", "display_name": "Trabajadores: Editar", "description": "Habilita el botón «Editar» en cada fila para modificar datos del trabajador" },
+        { "action": "delete", "display_name": "Trabajadores: Eliminar", "description": "Muestra el botón de eliminar en cada fila para borrar registros de trabajadores" },
+        { "action": "import", "display_name": "Trabajadores: Importar", "description": "Habilita el botón «Importar» para cargar trabajadores masivamente desde un archivo Excel" },
+        { "action": "export", "display_name": "Trabajadores: Exportar", "description": "Habilita el botón «Exportar» para descargar la lista de trabajadores en formato Excel" }
+    ]
 }
