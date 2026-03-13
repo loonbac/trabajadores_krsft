@@ -9,6 +9,7 @@ export default function ImportTab({
     downloadingTemplate, importResults, fileInputRef,
     downloadTemplate, handleFileSelect, handleDrop, importExcel,
     handleDragOver, handleDragLeave,
+    canImport, canExport,
 }) {
     return (
         <div className="max-w-4xl mx-auto">
@@ -23,7 +24,7 @@ export default function ImportTab({
                         <div className="flex-1">
                             <h3 className="text-base font-bold text-gray-900 mb-2">Descargar Plantilla</h3>
                             <p className="text-sm text-gray-500 mb-4">Descarga la plantilla Excel con el formato requerido</p>
-                            <Button variant="success" onClick={downloadTemplate} loading={downloadingTemplate} className="w-full gap-2">
+                            <Button variant="success" onClick={downloadTemplate} loading={downloadingTemplate} disabled={!canExport} className="w-full gap-2">
                                 <ArrowDownTrayIcon className="size-5" />
                                 {downloadingTemplate ? 'Descargando...' : 'Descargar Plantilla'}
                             </Button>
@@ -58,7 +59,7 @@ export default function ImportTab({
                                 }`}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
-                                onDrop={handleDrop}
+                                onDrop={canImport ? handleDrop : undefined}
                             >
                                 <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleFileSelect} className="sr-only" />
                                 {selectedFile ? (
@@ -71,7 +72,7 @@ export default function ImportTab({
                                         <button onClick={() => setSelectedFile(null)} className="shrink-0 rounded border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100">Cambiar</button>
                                     </div>
                                 ) : (
-                                    <button type="button" onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-2 w-full cursor-pointer focus:outline-none">
+                                    <button type="button" onClick={() => canImport && fileInputRef.current?.click()} className="flex flex-col items-center gap-2 w-full cursor-pointer focus:outline-none" disabled={!canImport}>
                                         <ArrowUpTrayIcon className="size-10 text-primary mx-auto" />
                                         <p className="text-sm text-gray-500">Arrastra el archivo aquí o haz clic para seleccionar</p>
                                         <span className="mt-1 inline-block rounded border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100">Formatos: .xlsx, .xls</span>
@@ -79,7 +80,7 @@ export default function ImportTab({
                                 )}
                             </div>
 
-                            {selectedFile && (
+                            {selectedFile && canImport && (
                                 <Button variant="success" onClick={importExcel} loading={importing} className="mt-4 w-full gap-2">
                                     <ArrowUpTrayIcon className="size-5" />
                                     {importing ? 'Importando...' : 'Comenzar Importación'}

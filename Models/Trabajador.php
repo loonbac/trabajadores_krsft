@@ -12,7 +12,7 @@ class Trabajador extends Model
         'dni', 'nombres', 'apellido_paterno', 'apellido_materno', 'nombre_completo',
         'fecha_nacimiento', 'lugar_nacimiento', 'genero', 'estado_civil', 'sistema_pensiones',
         'telefono', 'email', 'direccion', 'distrito', 'provincia', 'departamento',
-        'area_id', 'cargo', 'fecha_ingreso', 'fecha_cese', 'tipo_contrato', 'estado',
+        'area_id', 'cargo', 'tipo_trabajador', 'fecha_ingreso', 'fecha_cese', 'tipo_contrato', 'estado',
         'sueldo_basico', 'banco', 'numero_cuenta', 'tiene_antecedentes_penales',
         'tiene_antecedentes_policiales', 'tiene_sctr', 'tiene_epsrc',
         'contacto_emergencia_nombre', 'contacto_emergencia_telefono',
