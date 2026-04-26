@@ -20,6 +20,15 @@ export function useTrabajadoresData(auth) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCargo, setFilterCargo] = useState('');
   const [activeTab, setActiveTab] = useState('list');
+  const [vacationSearch, setVacationSearch] = useState('');
+  const [vacationRequests, setVacationRequests] = useState([]);
+  const [vacationForm, setVacationForm] = useState({
+    trabajador_id: '',
+    tipo: 'vacaciones',
+    fecha_inicio: '',
+    fecha_fin: '',
+    motivo: '',
+  });
 
   /* ── Form modal ── */
   const [editingId, setEditingId] = useState(null);
@@ -78,6 +87,223 @@ export function useTrabajadoresData(auth) {
     if (filterCargo) result = result.filter(t => t.cargo === filterCargo);
     return result;
   }, [trabajadores, searchQuery, filterCargo]);
+
+  const vacationBalances = useMemo(() => {
+    return trabajadores
+      .filter(t => (t.estado || '').trim().toLowerCase() === 'activo')
+      .map((t) => {
+        const start = t.fecha_ingreso ? new Date(t.fecha_ingreso) : null;
+        const validStart = start && !Number.isNaN(start.getTime());
+        const workedDays = validStart ? Math.max(0, Math.floor((Date.now() - start.getTime()) / (1000 * 60 * 60 * 24))) : 0;
+        const accruedDays = validStart ? Math.min(30, Math.round((workedDays / 365) * 30)) : 0;
+
+        const approvedDays = vacationRequests
+          .filter(r => r.trabajador_id === t.id && r.estado === 'aprobada')
+          .reduce((acc, r) => acc + (Number(r.dias) || 0), 0);
+
+        const pendingDays = vacationRequests
+          .filter(r => r.trabajador_id === t.id && r.estado === 'pendiente')
+          .reduce((acc, r) => acc + (Number(r.dias) || 0), 0);
+
+        return {
+          id: t.id,
+          dni: t.dni,
+          nombre: t.nombre_completo || `${t.apellido_paterno || ''} ${t.apellido_materno || ''} ${t.nombres || ''}`.trim(),
+          cargo: t.cargo || '-',
+          fecha_ingreso: t.fecha_ingreso || null,
+          accruedDays,
+          approvedDays,
+          pendingDays,
+          availableDays: Math.max(accruedDays - approvedDays, 0),
+        };
+      });
+  }, [trabajadores, vacationRequests]);
+
+  const filteredVacationBalances = useMemo(() => {
+    const q = vacationSearch.trim().toLowerCase();
+    if (!q) return vacationBalances;
+    return vacationBalances.filter((w) =>
+      (w.nombre || '').toLowerCase().includes(q)
+      || (w.dni || '').toLowerCase().includes(q)
+      || (w.cargo || '').toLowerCase().includes(q)
+    );
+  }, [vacationBalances, vacationSearch]);
+
+  const vacationSummary = useMemo(() => ({
+    activos: vacationBalances.length,
+    diasDisponibles: vacationBalances.reduce((acc, w) => acc + (w.availableDays || 0), 0),
+    solicitudesPendientes: vacationRequests.filter(r => r.estado === 'pendiente').length,
+    solicitudesAprobadas: vacationRequests.filter(r => r.estado === 'aprobada').length,
+  }), [vacationBalances, vacationRequests]);
+
+  const rrhhOverview = useMemo(() => {
+    const activeWorkers = trabajadores.filter(t => (t.estado || '').trim().toLowerCase() === 'activo');
+
+    const missingPayrollData = activeWorkers.filter(t => {
+      const hasContract = !!(t.tipo_contrato || '').trim();
+      const hasPension = !!(t.sistema_pensiones || '').trim();
+      const hasSalary = Number(t.sueldo_basico || 0) > 0;
+      return !(hasContract && hasPension && hasSalary);
+    });
+
+    const missingPlameData = activeWorkers.filter(t => {
+      const hasDni = !!(t.dni || '').trim();
+      const hasName = !!(t.nombre_completo || t.nombres || '').trim();
+      const hasEntryDate = !!t.fecha_ingreso;
+      return !(hasDni && hasName && hasEntryDate);
+    });
+
+    const potentialArcoRisk = activeWorkers.filter(t => !(t.email || '').trim() && !(t.telefono || '').trim());
+
+    const withVacationBase = activeWorkers.filter(t => !!t.fecha_ingreso);
+    const estimatedVacationPool = withVacationBase.reduce((acc, t) => {
+      const start = new Date(t.fecha_ingreso);
+      if (Number.isNaN(start.getTime())) return acc;
+      const daysWorked = Math.max(0, Math.floor((Date.now() - start.getTime()) / (1000 * 60 * 60 * 24)));
+      const estimatedAccrued = Math.min(30, Math.round((daysWorked / 365) * 30));
+      return acc + estimatedAccrued;
+    }, 0);
+
+    const complianceDenominator = Math.max(1, activeWorkers.length * 4);
+    const complianceNumerator = Math.max(0,
+      complianceDenominator
+      - missingPayrollData.length
+      - missingPlameData.length
+      - potentialArcoRisk.length
+      - activeWorkers.filter(t => !(t.fecha_ingreso || '').trim()).length
+    );
+
+    return {
+      activeWorkers: activeWorkers.length,
+      missingPayrollData: missingPayrollData.length,
+      missingPlameData: missingPlameData.length,
+      potentialArcoRisk: potentialArcoRisk.length,
+      estimatedVacationPool,
+      complianceScore: Math.max(0, Math.min(100, Math.round((complianceNumerator / complianceDenominator) * 100))),
+    };
+  }, [trabajadores]);
+
+  const payrollConcepts = useMemo(() => ([
+    { code: 'ING001', name: 'Sueldo Basico', type: 'ingreso', affectation: 'afecto', formula: 'base_mensual' },
+    { code: 'ING020', name: 'Horas Extra', type: 'ingreso', affectation: 'afecto', formula: 'horas_extra * tarifa_hora' },
+    { code: 'DES010', name: 'ONP', type: 'descuento', affectation: 'previsional', formula: 'base_previsional * 0.13' },
+    { code: 'DES020', name: 'AFP', type: 'descuento', affectation: 'previsional', formula: 'base_previsional * tasa_afp' },
+    { code: 'APP001', name: 'EsSalud', type: 'aporte', affectation: 'empleador', formula: 'base_salud * 0.09' },
+  ]), []);
+
+  const payrollFormulaModel = useMemo(() => ([
+    {
+      key: 'horas_trabajadas',
+      label: 'Horas Trabajadas',
+      formula: 'horas = dias_trabajados * 8',
+      excelReference: 'I = J * 8',
+    },
+    {
+      key: 'remuneracion_diaria',
+      label: 'Remuneracion Diaria',
+      formula: 'rem_diaria = remuneracion_bruta / 30',
+      excelReference: 'K = M / 30',
+    },
+    {
+      key: 'movilidad_supeditada',
+      label: 'Movilidad Supeditada',
+      formula: 'movilidad = tarifa_categoria * dias_trabajados +/- ajustes',
+      excelReference: 'P = AM * J (con ajustes manuales en algunas filas)',
+    },
+    {
+      key: 'total_ingresos',
+      label: 'Total de Ingresos',
+      formula: 'total_ingresos = SUM(remuneracion_bruta ... cts_trunca)',
+      excelReference: 'W = SUM(M:V)',
+    },
+    {
+      key: 'rem_aportacion',
+      label: 'Remuneracion para Aportacion',
+      formula: 'rem_aportacion = remuneracion_bruta + asignacion_familiar + vacaciones_truncas',
+      excelReference: 'X = M + N + S',
+    },
+    {
+      key: 'afp_onp',
+      label: 'Descuentos Previsionales',
+      formula: 'afp = rem_aportacion * 10%; onp = rem_aportacion * 13% (segun regimen)',
+      excelReference: 'AB = X * 10%; AA = X * 13%',
+    },
+    {
+      key: 'essalud',
+      label: 'EsSalud',
+      formula: 'essalud = rem_aportacion * 9%',
+      excelReference: 'AH = X * 9%',
+    },
+    {
+      key: 'total_deduccion',
+      label: 'Total Deduccion',
+      formula: 'deduccion = SUM(onp, afp, seguro, comision, quinta)',
+      excelReference: 'AF = SUM(AA:AE)',
+    },
+    {
+      key: 'neto_pagar',
+      label: 'Neto a Pagar',
+      formula: 'neto = total_ingresos - total_deduccion',
+      excelReference: 'AG = W - AF',
+    },
+    {
+      key: 'fin_mes',
+      label: 'Pago Fin de Mes',
+      formula: 'fin_mes = neto - primera_quincena',
+      excelReference: 'AK = AG - AJ',
+    },
+  ]), []);
+
+  const payrollExcelSnapshot = useMemo(() => ({
+    sourceFile: 'docs/plantillas/PLANILLA 2026 CEYA (16).xlsx',
+    workersInExcel: 12,
+    workersMatchedByDni: 9,
+    workersMissingInDb: 3,
+    missingWorkers: [
+      { dni: '70596908', nombre: 'ALVAREZ RUBIO EDUARDO ENRIQUE' },
+      { dni: '70552979', nombre: 'CONDEZO PISCO JHON HECTOR' },
+      { dni: '70482088', nombre: 'MACEDO TANGOA ROSA ISABEL' },
+    ],
+    netoTotal: 15113.66,
+    remuneracionTotal: 15461.66,
+    pensionDistribution: [
+      { system: 'INTEGRA', workers: 9 },
+      { system: 'PROFUTURO', workers: 2 },
+      { system: 'ONP', workers: 1 },
+    ],
+  }), []);
+
+  const legalParameters = useMemo(() => ([
+    { code: 'UIT_2026', name: 'UIT', value: 5350, unit: 'PEN', valid_from: '2026-01-01' },
+    { code: 'RMV_2026', name: 'Remuneracion Minima Vital', value: 1130, unit: 'PEN', valid_from: '2026-01-01' },
+    { code: 'ESSALUD_2026', name: 'Aporte EsSalud', value: 9, unit: '%', valid_from: '2026-01-01' },
+    { code: 'ONP_2026', name: 'Aporte ONP', value: 13, unit: '%', valid_from: '2026-01-01' },
+    { code: 'AFP_COM_REFER', name: 'AFP Comision Referencial', value: 1.69, unit: '%', valid_from: '2026-01-01' },
+  ]), []);
+
+  const plamePreview = useMemo(() => {
+    return trabajadores.slice(0, 20).map((t) => {
+      const hasDni = !!(t.dni || '').trim();
+      const hasName = !!(t.nombre_completo || t.nombres || '').trim();
+      const hasEntryDate = !!(t.fecha_ingreso || '').trim();
+      const hasStatus = !!(t.estado || '').trim();
+      const valid = hasDni && hasName && hasEntryDate && hasStatus;
+
+      return {
+        id: t.id,
+        dni: t.dni || '-',
+        name: t.nombre_completo || t.nombres || '-',
+        period: new Date().toISOString().slice(0, 7),
+        status: valid ? 'listo' : 'incompleto',
+        issues: [
+          !hasDni ? 'DNI' : null,
+          !hasName ? 'Nombre' : null,
+          !hasEntryDate ? 'Fecha ingreso' : null,
+          !hasStatus ? 'Estado' : null,
+        ].filter(Boolean),
+      };
+    });
+  }, [trabajadores]);
 
   /* ── Toast helper ── */
   const showToast = useCallback((message, type = 'success') => {
@@ -282,6 +508,80 @@ export function useTrabajadoresData(auth) {
   const handleDragOver = useCallback((e) => { e.preventDefault(); setDragging(true); }, []);
   const handleDragLeave = useCallback(() => setDragging(false), []);
 
+  const setVacationFormField = useCallback((field, value) => {
+    setVacationForm((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
+  const resetVacationForm = useCallback(() => {
+    setVacationForm({
+      trabajador_id: '',
+      tipo: 'vacaciones',
+      fecha_inicio: '',
+      fecha_fin: '',
+      motivo: '',
+    });
+  }, []);
+
+  const createVacationRequest = useCallback(() => {
+    const trabajadorId = Number(vacationForm.trabajador_id || 0);
+    const worker = vacationBalances.find(w => w.id === trabajadorId);
+
+    if (!worker) {
+      showToast('Selecciona un trabajador valido', 'error');
+      return;
+    }
+    if (!vacationForm.fecha_inicio || !vacationForm.fecha_fin) {
+      showToast('Debes indicar fecha de inicio y fin', 'error');
+      return;
+    }
+
+    const start = new Date(vacationForm.fecha_inicio);
+    const end = new Date(vacationForm.fecha_fin);
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) {
+      showToast('Rango de fechas invalido', 'error');
+      return;
+    }
+
+    const diffDays = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    if (vacationForm.tipo === 'vacaciones' && diffDays > worker.availableDays) {
+      showToast('El trabajador no tiene saldo suficiente para ese rango', 'error');
+      return;
+    }
+
+    const overlap = vacationRequests.some((r) => {
+      if (r.trabajador_id !== trabajadorId || r.estado === 'rechazada') return false;
+      const existingStart = new Date(r.fecha_inicio);
+      const existingEnd = new Date(r.fecha_fin);
+      return start <= existingEnd && end >= existingStart;
+    });
+
+    if (overlap) {
+      showToast('No se permite traslape con solicitudes vigentes', 'error');
+      return;
+    }
+
+    const request = {
+      id: Date.now(),
+      trabajador_id: trabajadorId,
+      trabajador_nombre: worker.nombre,
+      tipo: vacationForm.tipo,
+      fecha_inicio: vacationForm.fecha_inicio,
+      fecha_fin: vacationForm.fecha_fin,
+      dias: diffDays,
+      motivo: vacationForm.motivo || '-',
+      estado: 'pendiente',
+      created_at: new Date().toISOString(),
+    };
+
+    setVacationRequests((prev) => [request, ...prev]);
+    resetVacationForm();
+    showToast('Solicitud registrada en bandeja de RRHH', 'success');
+  }, [vacationForm, vacationBalances, vacationRequests, showToast, resetVacationForm]);
+
+  const updateVacationRequestStatus = useCallback((requestId, estado) => {
+    setVacationRequests((prev) => prev.map((r) => (r.id === requestId ? { ...r, estado } : r)));
+  }, []);
+
   return {
     trabajadores, stats, filteredTrabajadores, uniqueCargos,
     loading, saving, activeTab, setActiveTab,
@@ -292,6 +592,22 @@ export function useTrabajadoresData(auth) {
     confirmDelete, handleDeleteConfirmed, closeDeleteModal,
     toast,
     permissions,
+    rrhhOverview,
+    payrollConcepts,
+    payrollFormulaModel,
+    payrollExcelSnapshot,
+    legalParameters,
+    plamePreview,
+    vacationSearch,
+    setVacationSearch,
+    vacationBalances,
+    filteredVacationBalances,
+    vacationRequests,
+    vacationSummary,
+    vacationForm,
+    setVacationFormField,
+    createVacationRequest,
+    updateVacationRequestStatus,
     selectedFile, setSelectedFile, dragging, importing,
     downloadingTemplate, importResults, fileInputRef,
     downloadTemplate, handleFileSelect, handleDrop, importExcel,

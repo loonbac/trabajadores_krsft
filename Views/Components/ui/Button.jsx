@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import clsx from 'clsx';
 
 /* ── Variantes y tamaños HyperUI ── */
@@ -17,10 +16,7 @@ const SIZES = {
     lg: 'px-6 py-3 text-sm',
 };
 
-const Button = forwardRef((
-    { variant = 'primary', size = 'md', disabled = false, loading = false, type = 'button', onClick, children, className = '', ...props },
-    ref,
-) => {
+function Button({ variant = 'primary', size = 'md', disabled = false, loading = false, type = 'button', onClick, children, className = '', ref, ...props }) {
     const isDisabled = disabled || loading;
 
     return (
@@ -30,7 +26,7 @@ const Button = forwardRef((
             onClick={onClick}
             disabled={isDisabled}
             className={clsx(
-                'inline-flex items-center justify-center rounded font-medium transition-colors',
+                'inline-flex items-center justify-center rounded font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2',
                 VARIANTS[variant] ?? VARIANTS.primary,
                 SIZES[size],
                 isDisabled && 'opacity-50 cursor-not-allowed',
@@ -47,7 +43,7 @@ const Button = forwardRef((
             {children}
         </button>
     );
-});
+}
 
 Button.displayName = 'Button';
 export default Button;

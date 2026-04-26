@@ -1,13 +1,11 @@
-import { forwardRef } from 'react';
 import clsx from 'clsx';
 
 /**
  * Input — HyperUI Input Simple (patrón 4.1).
  */
-const Input = forwardRef((
-    { label, name, type = 'text', value, onChange, placeholder, error, required = false, helper, className = '', ...props },
-    ref,
-) => {
+function Input({
+    label, name, type = 'text', value, onChange, placeholder, error, required = false, helper, className = '', ref, ...props
+}) {
     return (
         <div className={className}>
             <label className="block">
@@ -35,7 +33,7 @@ const Input = forwardRef((
             {helper && !error && <p className="mt-1 text-xs text-gray-500">{helper}</p>}
         </div>
     );
-});
+}
 
 Input.displayName = 'Input';
 export default Input;
