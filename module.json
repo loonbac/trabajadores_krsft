@@ -1,9 +1,9 @@
 {
     "name": "TrabajadoresKrsft",
     "slug": "trabajadores_krsft",
-    "display_name": "TRABAJADORES",
-    "version": "3.2.8",
-    "description": "v3.2.8: Header tabla en cyan #0AA4A4 con texto blanco",
+    "display_name": "RECURSOS HUMANOS",
+    "version": "3.4.0",
+    "description": "v3.4.0: Motor de Planillas mensual integrado — cálculo automático de conceptos, boletas por trabajador y gestión de periodos",
     "icon": "icon.svg",
     "color": "#fb923c",
     "gradient": "#fb923c",

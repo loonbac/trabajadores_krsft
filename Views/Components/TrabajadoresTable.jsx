@@ -64,16 +64,16 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
                     {trabajadores.map((t) => (
                         <tr key={t.id} className="hover:bg-gray-50 transition-colors">
                             {/* Worker avatar + name */}
-                            <td className="whitespace-nowrap px-4 py-3">
+                            <td className="px-4 py-3">
                                 <div className="flex items-center gap-3">
                                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">
                                         {getInitials(t)}
                                     </span>
                                     <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-gray-900 truncate max-w-[200px]">
+                                        <p className="text-sm font-semibold text-gray-900">
                                             {t.nombre_completo || `${t.apellido_paterno || ''} ${t.apellido_materno || ''}, ${t.nombres || ''}`.trim()}
                                         </p>
-                                        <p className="text-xs text-gray-500 truncate max-w-[200px]">{t.email || 'Sin email'}</p>
+                                        <p className="text-xs text-gray-500">{t.email || 'Sin email'}</p>
                                     </div>
                                 </div>
                             </td>
@@ -91,11 +91,11 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
                             </td>
                             {/* Actions — HyperUI §8.2 Button Group */}
                             <td className="whitespace-nowrap px-4 py-3 text-center">
-                                <span className="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
+                                <span className="inline-flex -space-x-px overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm">
                                     {canEdit && (
                                         <button
                                             onClick={() => onEdit(t)}
-                                            className="inline-block border-e px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:relative"
+                                            className="inline-block border-e border-gray-300 px-3 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 focus:outline-none focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-blue-200"
                                             title="Editar"
                                         >
                                             <PencilSquareIcon className="size-4" />
@@ -104,7 +104,7 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
                                     {canDelete && (
                                         <button
                                             onClick={() => onDelete(t)}
-                                            className="inline-block px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:relative"
+                                            className="inline-block px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-red-200"
                                             title="Eliminar"
                                         >
                                             <TrashIcon className="size-4" />

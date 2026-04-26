@@ -3,6 +3,7 @@
 namespace Modulos_ERP\trabajadores_krsft\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Modulos_ERP\TrabajadoresKrsft\Models\RrhhPlanillaTrabajador;
 
 class Trabajador extends Model
 {
@@ -29,4 +30,20 @@ class Trabajador extends Model
         'tiene_sctr' => 'boolean',
         'tiene_epsrc' => 'boolean',
     ];
+
+    /**
+     * Planillas en las que ha participado este trabajador.
+     */
+    public function planillas()
+    {
+        return $this->hasMany(RrhhPlanillaTrabajador::class, 'trabajador_id');
+    }
+
+    /**
+     * Última planilla del trabajador.
+     */
+    public function ultimaPlanilla()
+    {
+        return $this->hasOne(RrhhPlanillaTrabajador::class, 'trabajador_id')->latest();
+    }
 }

@@ -1,13 +1,11 @@
-import { forwardRef } from 'react';
 import clsx from 'clsx';
 
 /**
  * Select — HyperUI Select Simple (patrón 5.1).
  */
-const Select = forwardRef((
-    { label, name, value, onChange, options = [], placeholder = 'Seleccionar...', error, required = false, helper, className = '', children, ...props },
-    ref,
-) => {
+function Select({
+    label, name, value, onChange, options = [], placeholder = 'Seleccionar...', error, required = false, helper, className = '', children, ref, ...props
+}) {
     return (
         <div className={className}>
             <label className="block">
@@ -41,7 +39,7 @@ const Select = forwardRef((
             {helper && !error && <p className="mt-1 text-xs text-gray-500">{helper}</p>}
         </div>
     );
-});
+}
 
 Select.displayName = 'Select';
 export default Select;

@@ -3,6 +3,7 @@
 namespace Modulos_ERP\TrabajadoresKrsft\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Services\LogKrsftService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -121,6 +122,16 @@ class TrabajadorController extends Controller
                 'updated_at' => now(),
             ]);
 
+            app(\App\Services\LogKrsftService::class)->log(
+                module: 'trabajadoreskrsft',
+                action: 'create_worker',
+                message: "Trabajador creado: {$nombreCompleto} (DNI: {$request->dni})",
+                level: 'info',
+                userId: auth()->id(),
+                userName: auth()->user()?->name,
+                extra: ['dni' => $request->dni, 'nombre' => $nombreCompleto]
+            );
+
             return response()->json([
                 'success' => true,
                 'message' => 'Trabajador creado exitosamente',
@@ -128,6 +139,13 @@ class TrabajadorController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error en store trabajador', ['error' => $e->getMessage()]);
+            
+            app(\App\Services\LogKrsftService::class)->logError(
+                module: 'trabajadoreskrsft',
+                action: 'create_worker_error',
+                message: "Error al crear trabajador DNI {$request->dni}: " . $e->getMessage()
+            );
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error interno al crear trabajador'
@@ -144,6 +162,13 @@ class TrabajadorController extends Controller
         }
 
         try {
+            $beforeEstado = $trabajador->estado;
+            $beforeData = [
+                'nombre_completo' => $trabajador->nombre_completo,
+                'estado' => $trabajador->estado,
+                'cargo' => $trabajador->cargo,
+            ];
+
             $data = $request->only([
                 'dni', 'nombres', 'apellido_paterno', 'apellido_materno',
                 'fecha_nacimiento', 'lugar_nacimiento', 'genero', 'estado_civil',
@@ -165,12 +190,59 @@ class TrabajadorController extends Controller
 
             DB::table($this->table)->where('id', $id)->update($data);
 
+            $updatedTrabajador = DB::table($this->table)->find($id);
+            $afterEstado = $updatedTrabajador->estado;
+            $afterData = [
+                'nombre_completo' => $updatedTrabajador->nombre_completo,
+                'estado' => $updatedTrabajador->estado,
+                'cargo' => $updatedTrabajador->cargo,
+            ];
+
+            $extra = [
+                'working_id' => $id,
+                'dni' => $trabajador->dni,
+                'before' => $beforeData,
+                'after' => $afterData,
+            ];
+
+            // Detect status change
+            if ($beforeEstado !== $afterEstado) {
+                $extra['status_changed'] = [
+                    'from' => $beforeEstado,
+                    'to' => $afterEstado,
+                ];
+                // Use warning level for status changes
+                $logLevel = 'warning';
+                $logMessage = "Trabajador {$updatedTrabajador->nombre_completo} (ID: {$id}) cambió estado de '{$beforeEstado}' a '{$afterEstado}'";
+            } else {
+                $logLevel = 'info';
+                $logMessage = "Trabajador actualizado: {$updatedTrabajador->nombre_completo} (ID: {$id})";
+            }
+
+            LogKrsftService::log(
+                module: 'trabajadoreskrsft',
+                action: 'update_worker',
+                message: $logMessage,
+                level: $logLevel,
+                userId: auth()->id(),
+                userName: auth()->user()?->name,
+                extra: $extra
+            );
+
             return response()->json([
                 'success' => true,
                 'message' => 'Trabajador actualizado exitosamente'
             ]);
         } catch (\Exception $e) {
             Log::error('Error en update trabajador', ['error' => $e->getMessage(), 'id' => $id]);
+            
+            app(\App\Services\LogKrsftService::class)->logError(
+                module: 'trabajadoreskrsft',
+                action: 'update_worker_error',
+                message: "Error al actualizar trabajador ID {$id}: " . $e->getMessage(),
+                extra: ['worker_id' => $id]
+            );
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error interno al actualizar trabajador'
@@ -188,9 +260,27 @@ class TrabajadorController extends Controller
 
         try {
             DB::table($this->table)->where('id', $id)->delete();
+            app(\App\Services\LogKrsftService::class)->log(
+                module: 'trabajadoreskrsft',
+                action: 'delete_worker',
+                message: "Trabajador eliminado: {$trabajador->nombre_completo} (DNI: {$trabajador->dni})",
+                level: 'warning',
+                userId: auth()->id(),
+                userName: auth()->user()?->name,
+                extra: ['dni' => $trabajador->dni]
+            );
+
             return response()->json(['success' => true, 'message' => 'Trabajador eliminado exitosamente']);
         } catch (\Exception $e) {
             Log::error('Error en destroy trabajador', ['error' => $e->getMessage(), 'id' => $id]);
+            
+            app(\App\Services\LogKrsftService::class)->logError(
+                module: 'trabajadoreskrsft',
+                action: 'delete_worker_error',
+                message: "Error al eliminar trabajador ID {$id}: " . $e->getMessage(),
+                extra: ['worker_id' => $id]
+            );
+
             return response()->json(['success' => false, 'message' => 'Error interno al eliminar trabajador'], 500);
         }
     }
@@ -489,6 +579,16 @@ class TrabajadorController extends Controller
                 $rowNum++;
             }
 
+            app(\App\Services\LogKrsftService::class)->log(
+                module: 'trabajadoreskrsft',
+                action: 'import_workers',
+                message: "Importación completada: {$imported} trabajadores nuevos",
+                level: 'info',
+                userId: auth()->id(),
+                userName: auth()->user()?->name,
+                extra: ['imported_count' => $imported, 'errors_count' => count($errors)]
+            );
+
             return response()->json([
                 'success' => true,
                 'total' => count($data),
@@ -498,6 +598,13 @@ class TrabajadorController extends Controller
             
         } catch (\Exception $e) {
             Log::error('Error al importar trabajadores', ['error' => $e->getMessage()]);
+            
+            app(\App\Services\LogKrsftService::class)->logError(
+                module: 'trabajadoreskrsft',
+                action: 'import_workers_error',
+                message: "Error crítico en importación: " . $e->getMessage()
+            );
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error interno al leer el archivo'
