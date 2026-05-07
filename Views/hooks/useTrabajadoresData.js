@@ -60,6 +60,10 @@ export function useTrabajadoresData(auth) {
   useEffect(() => { statsRef.current = stats; }, [stats]);
 
   const permissions = useMemo(() => ({
+    view_listado: hasPermission(auth, 'module.trabajadoreskrsft.view_listado'),
+    view_rrhh: hasPermission(auth, 'module.trabajadoreskrsft.view_rrhh'),
+    view_vacaciones: hasPermission(auth, 'module.trabajadoreskrsft.view_vacaciones'),
+    view_planillas: hasPermission(auth, 'module.trabajadoreskrsft.view_planillas'),
     create: hasPermission(auth, 'module.trabajadoreskrsft.create'),
     update: hasPermission(auth, 'module.trabajadoreskrsft.update'),
     delete: hasPermission(auth, 'module.trabajadoreskrsft.delete'),

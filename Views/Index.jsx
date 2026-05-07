@@ -66,42 +66,50 @@ export default function TrabajadoresIndex({ auth: authFromProps = null }) {
                 {/* ── Tabs ── */}
                 <div className="border-b border-gray-200">
                     <div className="-mb-px flex gap-1" role="tablist">
-                        <button
-                            role="tab" aria-selected={d.activeTab === 'list'}
-                            onClick={() => d.setActiveTab('list')}
-                            className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                                d.activeTab === 'list' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            <ListBulletIcon className="size-4" /> Listado
-                        </button>
-                        <button
-                            role="tab" aria-selected={d.activeTab === 'rrhh'}
-                            onClick={() => d.setActiveTab('rrhh')}
-                            className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                                d.activeTab === 'rrhh' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            <BuildingOffice2Icon className="size-4" /> Centro RRHH
-                        </button>
-                        <button
-                            role="tab" aria-selected={d.activeTab === 'vacaciones'}
-                            onClick={() => d.setActiveTab('vacaciones')}
-                            className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                                d.activeTab === 'vacaciones' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            <CalendarDaysIcon className="size-4" /> Vacaciones
-                        </button>
-                        <button
-                            role="tab" aria-selected={d.activeTab === 'planillas'}
-                            onClick={() => d.setActiveTab('planillas')}
-                            className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                                d.activeTab === 'planillas' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            <ClipboardDocumentListIcon className="size-4" /> Planillas
-                        </button>
+                        {d.permissions.view_listado && (
+                            <button
+                                role="tab" aria-selected={d.activeTab === 'list'}
+                                onClick={() => d.setActiveTab('list')}
+                                className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                    d.activeTab === 'list' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                            >
+                                <ListBulletIcon className="size-4" /> Listado
+                            </button>
+                        )}
+                        {d.permissions.view_rrhh && (
+                            <button
+                                role="tab" aria-selected={d.activeTab === 'rrhh'}
+                                onClick={() => d.setActiveTab('rrhh')}
+                                className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                    d.activeTab === 'rrhh' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                            >
+                                <BuildingOffice2Icon className="size-4" /> Centro RRHH
+                            </button>
+                        )}
+                        {d.permissions.view_vacaciones && (
+                            <button
+                                role="tab" aria-selected={d.activeTab === 'vacaciones'}
+                                onClick={() => d.setActiveTab('vacaciones')}
+                                className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                    d.activeTab === 'vacaciones' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                            >
+                                <CalendarDaysIcon className="size-4" /> Vacaciones
+                            </button>
+                        )}
+                        {d.permissions.view_planillas && (
+                            <button
+                                role="tab" aria-selected={d.activeTab === 'planillas'}
+                                onClick={() => d.setActiveTab('planillas')}
+                                className={`flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                    d.activeTab === 'planillas' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                            >
+                                <ClipboardDocumentListIcon className="size-4" /> Planillas
+                            </button>
+                        )}
                         {showImportTab && (
                             <button
                                 role="tab" aria-selected={d.activeTab === 'import'}

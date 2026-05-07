@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulos_ERP\trabajadores_krsft\Services;
+namespace Modulos_ERP\TrabajadoresKrsft\Services;
 
 use Illuminate\Support\Facades\DB;
 
