@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('trabajadores', 'tipo_trabajador')) {
+            return;
+        }
+
         Schema::table('trabajadores', function (Blueprint $table) {
             $table->string('tipo_trabajador')->nullable()->default('Administrativo')->after('cargo');
         });
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (!Schema::hasColumn('trabajadores', 'tipo_trabajador')) {
+            return;
+        }
+
         Schema::table('trabajadores', function (Blueprint $table) {
             $table->dropColumn('tipo_trabajador');
         });
