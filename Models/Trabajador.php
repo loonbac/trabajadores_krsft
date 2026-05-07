@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulos_ERP\trabajadores_krsft\Models;
+namespace Modulos_ERP\TrabajadoresKrsft\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Modulos_ERP\TrabajadoresKrsft\Models\RrhhPlanillaTrabajador;
