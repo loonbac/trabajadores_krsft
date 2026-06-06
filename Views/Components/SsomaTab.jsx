@@ -41,7 +41,7 @@ const PAGE_SIZE = 10;
  * SsomaTab — cumplimiento documental dentro de Trabajadores.
  * Tabla + filtros + export. El detalle/edición vive en la ficha (modal).
  */
-export default function SsomaTab({ onEdit }) {
+export default function SsomaTab({ onEdit, focusBlocked = false }) {
     const { auth } = usePage().props;
     const canViewCerts = hasPermission(auth, 'module.trabajadoreskrsft.view_certificaciones')
         || hasPermission(auth, 'module.trabajadoreskrsft.manage_certificaciones');
@@ -88,7 +88,7 @@ export default function SsomaTab({ onEdit }) {
     const {
         focused, focusRender, focusEnter, goFocus,
         sectionRef, flipRef, baseScrollRef, onAreaWheel,
-    } = useFocusTable(!loading && workers.length > 0 && !certPanelOpen && !drawerOpen);
+    } = useFocusTable(!loading && workers.length > 0 && !certPanelOpen && !drawerOpen && !focusBlocked);
     const theadRef    = useRef(null);
     const dniThRef    = useRef(null);
     const firstRowRef = useRef(null);

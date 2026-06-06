@@ -211,6 +211,7 @@ export default function TrabajadoresIndex({ auth: authFromProps = null }) {
                 {d.activeTab === 'ssoma' && (
                     <SsomaTab
                         onEdit={(trabajador) => d.editTrabajador(trabajador, 'ssoma')}
+                        focusBlocked={d.showModal || d.showDeleteModal}
                     />
                 )}
 
