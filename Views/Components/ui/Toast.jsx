@@ -27,7 +27,7 @@ export default function Toast({ show, message, type = 'success', duration = 4000
 
     return (
         <div className="fixed bottom-6 right-6 z-[100]">
-            <div role="alert" className={`flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg ${styles[type] || styles.success}`}>
+            <div role="alert" className={`krsft-slide-in-right flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg ${styles[type] || styles.success}`}>
                 {icons[type]}
                 <p className="text-sm font-medium">{message}</p>
             </div>

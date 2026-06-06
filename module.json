@@ -16,7 +16,18 @@
         "create": "create",
         "import": "import",
         "export": "export",
-        "template": "export"
+        "template": "export",
+        "ssoma": "view_ssoma",
+        "certifications": "view_certificaciones",
+        "pdr": "view_pdr"
+    },
+    "permission_implies": {
+        "manage_certificaciones": ["view_certificaciones"],
+        "manage_pdr_config": ["view_pdr"],
+        "manage_pdr_supervisors": ["view_pdr"],
+        "execute_pdr": ["view_pdr"],
+        "view_pdr_hallazgos": ["view_pdr"],
+        "manage_pdr_hallazgos": ["view_pdr_hallazgos", "view_pdr"]
     },
     "permissions": [
         { "action": "access", "display_name": "Trabajadores: Acceso Básico", "description": "Permite acceder al módulo" },
@@ -24,10 +35,19 @@
         { "action": "view_rrhh", "display_name": "Ver Pestaña: Centro RRHH", "description": "Permite ver la pestaña de Centro RRHH" },
         { "action": "view_vacaciones", "display_name": "Ver Pestaña: Vacaciones", "description": "Permite ver la pestaña de Vacaciones" },
         { "action": "view_planillas", "display_name": "Ver Pestaña: Planillas", "description": "Permite ver la pestaña de Planillas" },
+        { "action": "view_ssoma", "display_name": "Ver Pestaña: SSOMA", "description": "Permite ver la pestaña de SSOMA (cumplimiento documental de trabajadores)" },
+        { "action": "view_certificaciones", "display_name": "Ver Capacitaciones y Certificados", "description": "Permite ver las capacitaciones y certificaciones SSOMA del trabajador" },
+        { "action": "manage_certificaciones", "display_name": "Gestionar Capacitaciones y Certificados", "description": "Permite subir documentos y configurar emisión/vencimiento de certificaciones SSOMA" },
         { "action": "create", "display_name": "Trabajadores: Crear", "description": "Habilita el botón «Agregar» para registrar nuevos trabajadores" },
         { "action": "update", "display_name": "Trabajadores: Editar", "description": "Habilita el botón «Editar» para modificar datos" },
         { "action": "delete", "display_name": "Trabajadores: Eliminar", "description": "Permite borrar registros" },
         { "action": "import", "display_name": "Trabajadores: Importar", "description": "Habilita la pestaña y botón de importar Excel" },
-        { "action": "export", "display_name": "Trabajadores: Exportar", "description": "Habilita la exportación a Excel" }
+        { "action": "export", "display_name": "Trabajadores: Exportar", "description": "Habilita la exportación a Excel" },
+        { "action": "view_pdr", "display_name": "PDR: Ver Panel", "description": "Permite ver el panel de Metas PDR para Supervisores" },
+        { "action": "manage_pdr_config", "display_name": "PDR: Gestionar Configuración", "description": "Permite crear, editar y desactivar metas configurables" },
+        { "action": "manage_pdr_supervisors", "display_name": "PDR: Gestionar Supervisores", "description": "Permite registrar y desactivar supervisores PDR" },
+        { "action": "execute_pdr", "display_name": "PDR: Registrar Ejecuciones", "description": "Permite registrar ejecuciones de metas y subir archivos" },
+        { "action": "view_pdr_hallazgos", "display_name": "PDR: Ver Hallazgos", "description": "Permite ver el listado de hallazgos PDR" },
+        { "action": "manage_pdr_hallazgos", "display_name": "PDR: Gestionar Hallazgos", "description": "Permite resolver y cerrar hallazgos PDR" }
     ]
 }

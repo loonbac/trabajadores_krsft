@@ -21,7 +21,7 @@ function Input({
                     onChange={onChange}
                     placeholder={placeholder}
                     className={clsx(
-                        'mt-0.5 w-full rounded shadow-sm sm:text-sm transition-colors',
+                        'mt-0.5 w-full rounded sm:text-sm transition-colors',
                         error
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 focus:border-primary focus:ring-primary',

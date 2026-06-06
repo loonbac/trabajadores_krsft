@@ -14,7 +14,7 @@ export default function StatsCard({
     return (
         <article
             className={clsx(
-                'flex min-h-[104px] items-center gap-4 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm min-w-0 w-full max-w-full',
+                'flex min-h-[104px] items-center gap-4 rounded-xl border border-gray-200 bg-white px-5 py-4 min-w-0 w-full max-w-full',
                 className,
             )}
         >

@@ -1,5 +1,4 @@
 import { createPortal } from 'react-dom';
-import { XMarkIcon } from '@heroicons/react/24/outline';
 
 /**
  * Modal — HyperUI-aligned portal modal.
@@ -20,15 +19,15 @@ export default function Modal({
         md: 'max-w-lg',
         lg: 'max-w-3xl',
         xl: 'max-w-5xl',
+        '2xl': 'max-w-6xl',
     };
 
     return createPortal(
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4 backdrop-blur-sm"
-            onClick={onClose}
+            className="krsft-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4 backdrop-blur-sm"
         >
             <div
-                className={`w-full ${widths[size]} max-h-[90vh] flex flex-col rounded-lg bg-white shadow-2xl border-2 border-gray-200`}
+                className={`krsft-slide-in-right w-full ${widths[size]} max-h-[90vh] flex flex-col rounded-lg bg-white shadow-2xl border-2 border-gray-200`}
                 onClick={(e) => e.stopPropagation()}
             >
                 {title && (
@@ -37,14 +36,6 @@ export default function Modal({
                             {titleIcon}
                             {title}
                         </h2>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-                            aria-label="Cerrar"
-                        >
-                            <XMarkIcon className="size-5" />
-                        </button>
                     </div>
                 )}
                 <div className="flex-1 overflow-y-auto px-6 py-4">{children}</div>

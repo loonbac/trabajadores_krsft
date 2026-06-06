@@ -9,10 +9,16 @@ import {
 /**
  * useTrabajadoresData – All state, fetching, CRUD and handlers.
  */
+const computeWorkerStats = (workers) => ({
+  total: workers.length,
+  activos: workers.filter(t => (t.estado || '').trim().toLowerCase() === 'activo').length,
+  inactivos: workers.filter(t => (t.estado || '').trim().toLowerCase() !== 'activo').length,
+});
+
 export function useTrabajadoresData(auth) {
   /* ── Core state ── */
   const [trabajadores, setTrabajadores] = useState(() => loadFromCache('trabajadores') || []);
-  const [stats, setStats] = useState(() => loadFromCache('stats') || { total: 0, activos: 0, inactivos: 0 });
+  const [stats, setStats] = useState(() => computeWorkerStats(loadFromCache('trabajadores') || []));
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -34,6 +40,7 @@ export function useTrabajadoresData(auth) {
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ ...DEFAULT_FORM });
+  const [modalContext, setModalContext] = useState('general'); // 'general' | 'ssoma'
 
   /* ── Delete modal ── */
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -64,6 +71,8 @@ export function useTrabajadoresData(auth) {
     view_rrhh: hasPermission(auth, 'module.trabajadoreskrsft.view_rrhh'),
     view_vacaciones: hasPermission(auth, 'module.trabajadoreskrsft.view_vacaciones'),
     view_planillas: hasPermission(auth, 'module.trabajadoreskrsft.view_planillas'),
+    view_ssoma: hasPermission(auth, 'module.trabajadoreskrsft.view_ssoma'),
+    view_pdr: hasPermission(auth, 'module.trabajadoreskrsft.view_pdr'),
     create: hasPermission(auth, 'module.trabajadoreskrsft.create'),
     update: hasPermission(auth, 'module.trabajadoreskrsft.update'),
     delete: hasPermission(auth, 'module.trabajadoreskrsft.delete'),
@@ -323,16 +332,12 @@ export function useTrabajadoresData(auth) {
   const loadTrabajadores = useCallback(async (withLoading = false) => {
     if (withLoading) setLoading(true);
     try {
-      const res = await fetch(`${API}/list`, { headers: hdrs() });
+      const res = await fetch(`${API}/list?_t=${Date.now()}`, { headers: hdrs(), cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
         const incomingRaw = data.trabajadores ?? data.workers ?? [];
         const incoming = Array.isArray(incomingRaw) ? incomingRaw : [];
-        const computedStats = {
-          total: incoming.length,
-          activos: incoming.filter(t => (t.estado || '').trim().toLowerCase() === 'activo').length,
-          inactivos: incoming.filter(t => (t.estado || '').trim().toLowerCase() !== 'activo').length,
-        };
+        const computedStats = computeWorkerStats(incoming);
         if (JSON.stringify(trabajadoresRef.current) !== JSON.stringify(incoming)) {
           setTrabajadores(incoming);
           saveToCache('trabajadores', incoming);
@@ -351,7 +356,7 @@ export function useTrabajadoresData(auth) {
 
   const loadStats = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/stats`, { headers: hdrs() });
+      const res = await fetch(`${API}/stats?_t=${Date.now()}`, { headers: hdrs(), cache: 'no-store' });
       const data = await res.json();
       if (data.success && data.stats) {
         if (JSON.stringify(statsRef.current) !== JSON.stringify(data.stats)) {
@@ -368,32 +373,33 @@ export function useTrabajadoresData(auth) {
   useEffect(() => {
     const hasCache = trabajadoresRef.current.length > 0;
     loadTrabajadores(!hasCache);
-    loadStats();
     pollingRef.current = setInterval(() => {
       loadTrabajadores();
-      loadStats();
     }, POLLING_MS);
     return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
-  }, [loadTrabajadores, loadStats]);
+  }, [loadTrabajadores]);
 
   /* ── Modal handlers ── */
-  const openCreateModal = useCallback(() => {
-    if (!permissions.create) {
+  const openCreateModal = useCallback((ctx = 'general') => {
+    // En SSOMA el gate es view_ssoma (tab + middleware backend), no 'create'
+    if (ctx !== 'ssoma' && !permissions.create) {
       showToast('No tienes permiso para crear trabajadores', 'error');
       return;
     }
 
+    setModalContext(ctx);
     setForm({ ...DEFAULT_FORM });
     setEditingId(null);
     setShowModal(true);
   }, [permissions.create, showToast]);
-  const closeModal = useCallback(() => { setShowModal(false); setForm({ ...DEFAULT_FORM }); setEditingId(null); }, []);
-  const editTrabajador = useCallback((t) => {
-    if (!permissions.update) {
+  const closeModal = useCallback(() => { setShowModal(false); setForm({ ...DEFAULT_FORM }); setEditingId(null); setModalContext('general'); }, []);
+  const editTrabajador = useCallback((t, ctx = 'general') => {
+    if (ctx !== 'ssoma' && !permissions.update) {
       showToast('No tienes permiso para editar trabajadores', 'error');
       return;
     }
 
+    setModalContext(ctx);
     setEditingId(t.id);
     setForm({ ...t });
     setShowModal(true);
@@ -424,6 +430,28 @@ export function useTrabajadoresData(auth) {
     } catch { showToast('Error de conexión', 'error'); }
     setSaving(false);
   }, [editingId, form, permissions.create, permissions.update, showToast, closeModal, loadTrabajadores, loadStats]);
+
+  /* ── Submit puro (sin side-effects): devuelve { success, id, message } ── */
+  const submitWorker = useCallback(async () => {
+    if ((editingId && !permissions.update) || (!editingId && !permissions.create)) {
+      return { success: false, message: 'No tienes permiso para guardar trabajadores' };
+    }
+    try {
+      const url = editingId ? `${API}/${editingId}` : `${API}/create`;
+      const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', headers: jsonHdrs(), body: JSON.stringify(form) });
+      const data = await res.json();
+      if (data.success) {
+        return { success: true, id: editingId ?? data.trabajador_id, message: data.message };
+      }
+      return { success: false, message: data.message || 'Error al guardar' };
+    } catch {
+      return { success: false, message: 'Error de conexión' };
+    }
+  }, [editingId, form, permissions.create, permissions.update]);
+
+  const refreshWorkers = useCallback(async () => {
+    await Promise.all([loadTrabajadores(), loadStats()]);
+  }, [loadTrabajadores, loadStats]);
 
   /* ── Delete ── */
   const confirmDelete = useCallback((t) => {
@@ -592,6 +620,7 @@ export function useTrabajadoresData(auth) {
     searchQuery, setSearchQuery, filterCargo, setFilterCargo,
     editingId, showModal, form, handleFormChange,
     openCreateModal, closeModal, editTrabajador, saveTrabajador,
+    submitWorker, refreshWorkers, showToast, modalContext,
     showDeleteModal, itemToDelete, deleting,
     confirmDelete, handleDeleteConfirmed, closeDeleteModal,
     toast,
