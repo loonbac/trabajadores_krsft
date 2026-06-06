@@ -3,7 +3,7 @@ import Button from './ui/Button';
 
 function SummaryCard({ title, value, icon, valueClass = 'text-gray-900' }) {
   return (
-    <article className="flex h-full flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article className="flex h-full flex-col justify-between rounded-xl border border-gray-200 bg-white p-5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
         <span className="inline-flex size-10 items-center justify-center rounded-lg bg-gray-100 text-gray-600">{icon}</span>
@@ -27,7 +27,7 @@ export default function VacationAdminTab({
   return (
     <div className="space-y-5">
       <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <article className="rounded-xl border border-gray-200 bg-white p-5">
           <h3 className="text-xs font-bold uppercase tracking-wide text-gray-700">Registrar solicitud</h3>
           <div className="mt-4 space-y-3">
             <label className="block text-xs font-medium text-gray-600">
@@ -102,11 +102,11 @@ export default function VacationAdminTab({
         </div>
       </section>
 
-      <article className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <article className="rounded-xl border border-gray-200 bg-white">
         <div className="border-b border-gray-100 px-5 py-3">
           <h3 className="text-xs font-bold uppercase tracking-wide text-gray-700">Bandeja de solicitudes</h3>
         </div>
-        <div className="overflow-x-auto">
+        <div className="hide-scrollbar overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
             <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
               <tr>
@@ -164,7 +164,7 @@ export default function VacationAdminTab({
         </div>
       </article>
 
-      <article className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <article className="rounded-xl border border-gray-200 bg-white">
         <div className="border-b border-gray-100 px-5 py-3">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <h3 className="flex-shrink-0 whitespace-nowrap text-xs font-bold uppercase tracking-wide text-gray-700">Saldos de vacaciones por trabajador</h3>
@@ -177,7 +177,7 @@ export default function VacationAdminTab({
             />
           </div>
         </div>
-        <div className="max-h-[340px] overflow-auto">
+        <div className="hide-scrollbar max-h-[340px] overflow-auto">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
             <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
               <tr>

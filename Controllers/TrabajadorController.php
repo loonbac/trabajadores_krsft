@@ -25,6 +25,11 @@ class TrabajadorController extends Controller
     {
         $query = DB::table($this->table);
 
+        // Listado general: solo trabajadores internos (los externos se gestionan en SSOMA)
+        $query->where(function ($q) {
+            $q->where('origen', 'interno')->orWhereNull('origen');
+        });
+
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
         }
@@ -106,6 +111,7 @@ class TrabajadorController extends Controller
                 'fecha_cese' => $request->fecha_cese,
                 'tipo_contrato' => $request->tipo_contrato ?? 'Indefinido',
                 'estado' => $request->estado ?? 'Activo',
+                'origen' => $request->origen === 'externo' ? 'externo' : 'interno',
                 'sueldo_basico' => $request->sueldo_basico ?? 0,
                 'banco' => $request->banco,
                 'numero_cuenta' => $request->numero_cuenta,
@@ -258,6 +264,13 @@ class TrabajadorController extends Controller
             return response()->json(['success' => false, 'message' => 'Trabajador no encontrado'], 404);
         }
 
+        if (($trabajador->origen ?? 'interno') === 'externo') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Los trabajadores externos solo se eliminan desde SSOMA.',
+            ], 403);
+        }
+
         try {
             DB::table($this->table)->where('id', $id)->delete();
             app(\App\Services\LogKrsftService::class)->log(
@@ -287,8 +300,12 @@ class TrabajadorController extends Controller
 
     public function stats()
     {
-        $total = DB::table($this->table)->count();
-        $activos = DB::table($this->table)->where('estado', 'Activo')->count();
+        $baseQuery = DB::table($this->table)->where(function ($q) {
+            $q->where('origen', 'interno')->orWhereNull('origen');
+        });
+
+        $total = (clone $baseQuery)->count();
+        $activos = (clone $baseQuery)->where('estado', 'Activo')->count();
         $inactivos = $total - $activos;
 
         return response()->json([

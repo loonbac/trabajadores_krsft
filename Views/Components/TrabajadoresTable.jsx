@@ -15,7 +15,38 @@ const ESTADO_VARIANT = {
     Licencia: 'blue',
 };
 
-const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loading, onEdit, onDelete, openCreateModal, canCreate, canEdit, canDelete }) {
+let wheelTarget = 0;
+let wheelCurrent = 0;
+let wheelFrame = null;
+
+const stepSmoothWheel = () => {
+    const remaining = wheelTarget - wheelCurrent;
+
+    if (Math.abs(remaining) < 0.5) {
+        window.scrollBy({ top: remaining, left: 0, behavior: 'auto' });
+        wheelTarget = 0;
+        wheelCurrent = 0;
+        wheelFrame = null;
+        return;
+    }
+
+    const move = remaining * 0.24;
+    window.scrollBy({ top: move, left: 0, behavior: 'auto' });
+    wheelCurrent += move;
+    wheelFrame = window.requestAnimationFrame(stepSmoothWheel);
+};
+
+const forwardVerticalWheel = (event) => {
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    event.preventDefault();
+    wheelTarget += event.deltaY;
+
+    if (!wheelFrame) {
+        wheelFrame = window.requestAnimationFrame(stepSmoothWheel);
+    }
+};
+
+const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loading, onEdit, onDelete, openCreateModal, canCreate, canEdit, canDelete, smoothWheel = true }) {
     /* Loading */
     if (loading) {
         return (
@@ -48,7 +79,10 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
 
     /* Table */
     return (
-        <div className="overflow-x-auto rounded-lg border-2 border-gray-300 shadow-md">
+        <div
+            className="krsft-fade-up hide-scrollbar overflow-x-auto rounded-lg border-2 border-gray-300"
+            onWheel={smoothWheel ? forwardVerticalWheel : undefined}
+        >
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                 <thead className="text-left">
                     <tr>
@@ -61,8 +95,12 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                    {trabajadores.map((t) => (
-                        <tr key={t.id} className="hover:bg-gray-50 transition-colors">
+                    {trabajadores.map((t, i) => (
+                        <tr
+                            key={t.id}
+                            className="krsft-fade-up transition-colors hover:bg-primary-50/40"
+                            style={{ '--krsft-delay': `${Math.min(i * 30, 600)}ms` }}
+                        >
                             {/* Worker avatar + name */}
                             <td className="px-4 py-3">
                                 <div className="flex items-center gap-3">
@@ -91,7 +129,7 @@ const TrabajadoresTable = memo(function TrabajadoresTable({ trabajadores, loadin
                             </td>
                             {/* Actions — HyperUI §8.2 Button Group */}
                             <td className="whitespace-nowrap px-4 py-3 text-center">
-                                <span className="inline-flex -space-x-px overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm">
+                                <span className="inline-flex -space-x-px overflow-hidden rounded-md border border-gray-300 bg-white">
                                     {canEdit && (
                                         <button
                                             onClick={() => onEdit(t)}

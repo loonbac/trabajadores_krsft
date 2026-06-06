@@ -386,8 +386,8 @@ function BoletaModal({ boleta, onClose }) {
     const plan = registro?.planilla ?? {};
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-            <div className="w-full max-w-2xl rounded-xl bg-white shadow-2xl overflow-hidden">
+        <div className="krsft-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+            <div className="krsft-slide-in-right w-full max-w-2xl rounded-xl bg-white shadow-2xl overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-teal-600 to-teal-500 px-6 py-4 flex justify-between items-center">
                     <div>
@@ -460,8 +460,8 @@ function CrearPlanillaModal({ show, form, onChange, onSubmit, onClose, saving })
     if (!show) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-            <div className="w-full max-w-md rounded-xl bg-white shadow-xl overflow-hidden">
+        <div className="krsft-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+            <div className="krsft-slide-in-right w-full max-w-md rounded-xl bg-white shadow-xl overflow-hidden">
                 <div className="flex justify-between items-center px-6 py-4 border-b">
                     <h3 className="font-semibold text-gray-800">Nueva Planilla</h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><XMarkIcon className="size-5" /></button>
