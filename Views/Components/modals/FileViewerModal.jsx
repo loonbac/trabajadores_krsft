@@ -353,15 +353,11 @@ function FileViewerModal({ isOpen, file, getDownloadUrl, onClose }) {
     };
   }, [isOpen]);
 
-  const isWord = !!(file?.mime_type && (
-    file.mime_type.includes('wordprocessingml') || file.mime_type.includes('msword')
-  ));
-  const isExcel = !!(file?.mime_type && (
-    file.mime_type.includes('spreadsheetml') || file.mime_type.includes('ms-excel') || file.mime_type.includes('msexcel')
-  ));
-  const isDwg = !!(file?.mime_type && (
-    file.mime_type.includes('dwg') || file.mime_type.includes('autocad') || file.mime_type.includes('acad')
-  )) || !!(file?.original_name && /\.(dwg|dxf)$/i.test(file.original_name));
+  const mime = file?.mime_type || '';
+  const fname = file?.original_name || '';
+  const isWord = mime.includes('wordprocessingml') || mime.includes('msword') || /\.(docx?)$/i.test(fname);
+  const isExcel = mime.includes('spreadsheetml') || mime.includes('ms-excel') || mime.includes('msexcel') || /\.(xlsx?)$/i.test(fname);
+  const isDwg = mime.includes('dwg') || mime.includes('autocad') || mime.includes('acad') || /\.(dwg|dxf)$/i.test(fname);
 
   useBlockGoogleFonts(isOpen && isWord);
 
@@ -462,7 +458,7 @@ function FileViewerModal({ isOpen, file, getDownloadUrl, onClose }) {
 
   // Cargar PDF como ArrayBuffer
   useEffect(() => {
-    const isPdf = file?.mime_type?.includes('pdf');
+    const isPdf = mime.includes('pdf') || /\.pdf$/i.test(fname);
     if (!isOpen || !file || !isPdf) return;
     let cancelled = false;
     setIsLoading(true);
@@ -515,9 +511,9 @@ function FileViewerModal({ isOpen, file, getDownloadUrl, onClose }) {
   if (!isOpen || !file) return null;
 
   const isDwgRender = isDwg;
-  const isImage = !isDwgRender && file.mime_type?.startsWith('image/');
-  const isPdf = file.mime_type?.includes('pdf');
-  const isVideo = file.mime_type?.startsWith('video/');
+  const isImage = !isDwgRender && (mime.startsWith('image/') || /\.(jpe?g|png|gif|webp|svg|bmp)$/i.test(fname));
+  const isPdf = mime.includes('pdf') || /\.pdf$/i.test(fname);
+  const isVideo = mime.startsWith('video/') || /\.(mp4|webm|ogv|mov)$/i.test(fname);
   const isExcelRender = isExcel;
 
   return (
