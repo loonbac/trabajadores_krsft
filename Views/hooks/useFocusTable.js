@@ -95,6 +95,10 @@ export function useFocusTable(enabled = true) {
         if (focused || !enabled) return undefined;
         const onWheel = (e) => {
             if (e.deltaY <= 4) return;
+            // Si hay un modal o diálogo abierto en el DOM, no interferir con el scroll
+            if (document.querySelector('[role="dialog"]') || document.querySelector('.z-50')) {
+                return;
+            }
             const r = sectionRef.current?.getBoundingClientRect();
             if (r && r.top < window.innerHeight && r.bottom > 80) {
                 e.preventDefault();
@@ -127,6 +131,9 @@ export function useFocusTable(enabled = true) {
 
     // Salir del modo foco al scrollear hacia arriba estando ya en el tope.
     const onAreaWheel = useCallback((e) => {
+        if (document.querySelector('[role="dialog"]') || document.querySelector('.z-50')) {
+            return;
+        }
         if (focused && e.deltaY < 0 && baseScrollRef.current && baseScrollRef.current.scrollTop <= 0) {
             goFocus(false);
         }
