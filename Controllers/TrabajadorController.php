@@ -225,7 +225,7 @@ class TrabajadorController extends Controller
                 $logMessage = "Trabajador actualizado: {$updatedTrabajador->nombre_completo} (ID: {$id})";
             }
 
-            LogKrsftService::log(
+            app(\App\Services\LogKrsftService::class)->log(
                 module: 'trabajadoreskrsft',
                 action: 'update_worker',
                 message: $logMessage,
