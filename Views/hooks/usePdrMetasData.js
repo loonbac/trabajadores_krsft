@@ -111,6 +111,29 @@ export function usePdrMetasData(auth) {
         } catch { /* silent */ }
     }, [supervisorId]);
 
+    const slugify = useCallback((value) => String(value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, ''), []);
+
+    const generarAsignadasActuales = useCallback(async () => {
+        await fetch(`${API}/asignadas/generar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...hdrs() },
+            body: JSON.stringify({}),
+        });
+    }, []);
+
+    const refreshMetaManagementState = useCallback(async () => {
+        await Promise.all([
+            fetchMetasConfig(),
+            fetchResumen(supervisorId),
+            supervisorId ? fetchPendientes(supervisorId) : fetchSupervisoresResumen(),
+        ]);
+    }, [fetchMetasConfig, fetchPendientes, fetchResumen, fetchSupervisoresResumen, supervisorId]);
+
     /* ── Write ops ── */
     const registrarEjecucion = useCallback(async (formData) => {
         setSaving(true);
@@ -254,6 +277,98 @@ export function usePdrMetasData(auth) {
         }
     }, [fetchHallazgos, showToast]);
 
+    const createMetaConfig = useCallback(async (payload) => {
+        setSaving(true);
+        try {
+            const body = {
+                nombre: payload.nombre,
+                slug: slugify(payload.nombre),
+                tipo_frecuencia: payload.tipo_frecuencia,
+                cantidad_requerida: Number(payload.cantidad_requerida),
+                es_obligatoria: !!payload.es_obligatoria,
+                orden: payload.orden === '' || payload.orden == null ? 0 : Number(payload.orden),
+            };
+            const res = await fetch(`${API}/metas-config`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...hdrs() },
+                body: JSON.stringify(body),
+            });
+            const json = await res.json();
+            if (res.ok && json.success) {
+                await generarAsignadasActuales();
+                await refreshMetaManagementState();
+                showToast('Meta creada correctamente');
+                return { ok: true, data: json.data };
+            }
+            const msg = json?.errors ? Object.values(json.errors)?.[0]?.[0] : json?.message;
+            showToast(msg || 'Error al crear la meta', 'error');
+            return { ok: false };
+        } catch {
+            showToast('Error de conexion', 'error');
+            return { ok: false };
+        } finally {
+            setSaving(false);
+        }
+    }, [generarAsignadasActuales, refreshMetaManagementState, showToast, slugify]);
+
+    const updateMetaConfig = useCallback(async (id, payload) => {
+        setSaving(true);
+        try {
+            const body = {
+                nombre: payload.nombre,
+                slug: slugify(payload.nombre),
+                tipo_frecuencia: payload.tipo_frecuencia,
+                cantidad_requerida: Number(payload.cantidad_requerida),
+                es_obligatoria: !!payload.es_obligatoria,
+                orden: payload.orden === '' || payload.orden == null ? 0 : Number(payload.orden),
+                is_active: payload.is_active,
+            };
+            const res = await fetch(`${API}/metas-config/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', ...hdrs() },
+                body: JSON.stringify(body),
+            });
+            const json = await res.json();
+            if (res.ok && json.success) {
+                await generarAsignadasActuales();
+                await refreshMetaManagementState();
+                showToast('Meta actualizada correctamente');
+                return { ok: true, data: json.data };
+            }
+            const msg = json?.errors ? Object.values(json.errors)?.[0]?.[0] : json?.message;
+            showToast(msg || 'Error al actualizar la meta', 'error');
+            return { ok: false };
+        } catch {
+            showToast('Error de conexion', 'error');
+            return { ok: false };
+        } finally {
+            setSaving(false);
+        }
+    }, [generarAsignadasActuales, refreshMetaManagementState, showToast, slugify]);
+
+    const deactivateMetaConfig = useCallback(async (id) => {
+        setSaving(true);
+        try {
+            const res = await fetch(`${API}/metas-config/${id}`, {
+                method: 'DELETE',
+                headers: hdrs(),
+            });
+            const json = await res.json();
+            if (res.ok && json.success) {
+                await refreshMetaManagementState();
+                showToast('Meta desactivada correctamente');
+                return { ok: true };
+            }
+            showToast(json?.message || 'Error al desactivar la meta', 'error');
+            return { ok: false };
+        } catch {
+            showToast('Error de conexion', 'error');
+            return { ok: false };
+        } finally {
+            setSaving(false);
+        }
+    }, [refreshMetaManagementState, showToast]);
+
     /* ── Lifecycle ── */
     useEffect(() => {
         Promise.all([fetchSupervisores(), fetchMetasConfig()]).then(() => setLoading(false));
@@ -304,6 +419,7 @@ export function usePdrMetasData(auth) {
         fetchSupervisores, fetchTrabajadores,
         createSupervisor, deleteSupervisor,
         createSupervisorsBatch, deleteSupervisorsBatch,
+        createMetaConfig, updateMetaConfig, deactivateMetaConfig,
         showToast,
     };
 }
