@@ -144,7 +144,7 @@ export default function PdrSupervisoresModal({
             open={open}
             onClose={handleClose}
             size="2xl"
-            bodyClassName="flex min-h-0 flex-col overflow-hidden"
+            bodyClassName="flex h-[72vh] min-h-0 flex-col overflow-hidden"
             title="Gestionar Supervisores PDR"
             titleIcon={<UserGroupIcon className="size-5 text-primary" />}
             footer={
@@ -156,10 +156,10 @@ export default function PdrSupervisoresModal({
                 </>
             }
         >
-            <div className="flex min-h-0 flex-1 items-stretch gap-4">
+            <div className="flex min-h-0 flex-1 items-stretch gap-4 overflow-hidden">
                 {/* ── LEFT: Trabajadores disponibles ── */}
                 <div
-                    className={`krsft-fade-up flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex min-h-0 min-w-0 basis-0 flex-1 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseLeft ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                 >
@@ -196,7 +196,7 @@ export default function PdrSupervisoresModal({
                         Seleccionar todo ({leftCount}/{leftItems.length})
                     </label>
 
-                    <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain divide-y divide-gray-50">
+                    <ul className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-contain divide-y divide-gray-50">
                         {leftItems.length === 0 ? (
                             <li className="krsft-fade-in px-4 py-10 text-center text-sm text-gray-400">
                                 {trabajadores.length === 0 ? 'Cargando...' : 'Sin trabajadores disponibles'}
@@ -276,7 +276,7 @@ export default function PdrSupervisoresModal({
 
                 {/* ── RIGHT: Supervisores PDR ── */}
                 <div
-                    className={`krsft-fade-up flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex min-h-0 min-w-0 basis-0 flex-1 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseRight ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                     style={{ '--krsft-delay': '80ms' }}
@@ -314,7 +314,7 @@ export default function PdrSupervisoresModal({
                         Seleccionar todo ({rightCount}/{rightItems.length})
                     </label>
 
-                    <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain divide-y divide-gray-50">
+                    <ul className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-contain divide-y divide-gray-50">
                         {rightItems.length === 0 ? (
                             <li className="krsft-fade-in px-4 py-10 text-center text-sm text-gray-400">
                                 Sin supervisores registrados
