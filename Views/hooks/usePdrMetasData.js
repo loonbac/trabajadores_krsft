@@ -48,6 +48,11 @@ export function usePdrMetasData(auth) {
             'module.trabajadoreskrsft.view_pdr_supervisores',
             'module.trabajadoreskrsft.manage_pdr_supervisores',
         ]),
+        canReadResumenSupervisores: hasAnyPermission(auth, [
+            'module.trabajadoreskrsft.view_pdr',
+            'module.trabajadoreskrsft.view_pdr_resumen_supervisores',
+            'module.trabajadoreskrsft.manage_pdr_supervisores',
+        ]),
         canGenerateAsignaciones: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_asignadas'),
     }), [auth]);
 
@@ -70,12 +75,13 @@ export function usePdrMetasData(auth) {
     }, [permissions.canReadSupervisores]);
 
     const fetchSupervisoresResumen = useCallback(async () => {
+        if (!permissions.canReadResumenSupervisores) return;
         try {
             const res = await fetch(`${API}/resumen-supervisores`, { headers: hdrs(), cache: 'no-store' });
             const json = await res.json();
             if (json.success) setSupervisoresResumen(Array.isArray(json.data) ? json.data : []);
         } catch { /* silent */ }
-    }, []);
+    }, [permissions.canReadResumenSupervisores]);
 
     const fetchMetasConfig = useCallback(async () => {
         if (!permissions.canReadMetas) return;
