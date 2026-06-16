@@ -34,8 +34,8 @@
     },
     "permission_implies": {
         "manage_certificaciones": ["view_certificaciones"],
-        "manage_pdr_config": ["view_pdr", "view_pdr_resumen", "create", "update", "delete"],
-        "manage_pdr_supervisores": ["view_pdr", "view_pdr_resumen", "create", "update", "delete"],
+        "manage_pdr_config": ["view_pdr", "view_pdr_config", "view_pdr_resumen", "create", "update", "delete"],
+        "manage_pdr_supervisores": ["view_pdr", "view_pdr_supervisores", "view_pdr_resumen", "create", "update", "delete"],
         "manage_pdr_asignadas": ["view_pdr", "view_pdr_asignadas", "create", "delete"],
         "execute_pdr": ["view_pdr", "view_pdr_ejecucion", "create", "delete"],
         "manage_pdr_hallazgos": ["view_pdr", "view_pdr_hallazgos", "update"],
