@@ -16,6 +16,10 @@ class PdrMetaService
      * Generate period assignments for all active supervisors × active meta configs.
      * Idempotent: skips existing (supervisor, config, period) combinations.
      *
+     * El loop se ejecuta dentro de una transacción y se traga la UniqueConstraint
+     * residual como no-op para que un dashboard GET (que dispara esto en cada
+     * mutación del PDR) nunca pueda devolver 500.
+     *
      * @return int Number of new assignments created
      */
     public function generarMetasPeriodo(Carbon $fecha, ?int $supervisorId = null): int
@@ -27,33 +31,41 @@ class PdrMetaService
         $configs = PdrMetaConfig::active()->get();
         $created = 0;
 
-        foreach ($supervisores as $supervisor) {
-            foreach ($configs as $config) {
-                // Fechas como Y-m-d para evitar drift de hora/timezone y matchear
-                // exactamente lo guardado en BD.
-                $inicio = $this->inicioPeriodo($fecha, $config->tipo_frecuencia)->toDateString();
-                $fin    = $this->finPeriodo($fecha, $config->tipo_frecuencia)->toDateString();
+        DB::transaction(function () use ($supervisores, $configs, $fecha, &$created) {
+            foreach ($supervisores as $supervisor) {
+                foreach ($configs as $config) {
+                    // Fechas como Y-m-d para evitar drift de hora/timezone y matchear
+                    // exactamente lo guardado en BD.
+                    $inicio = $this->inicioPeriodo($fecha, $config->tipo_frecuencia)->toDateString();
+                    $fin    = $this->finPeriodo($fecha, $config->tipo_frecuencia)->toDateString();
 
-                // firstOrCreate es atómico: la constraint única pdr_asignada_periodo_unique
-                // evita duplicados aunque el check + create manual no.
-                $asignada = PdrMetaAsignada::firstOrCreate(
-                    [
-                        'supervisor_id'   => $supervisor->id,
-                        'meta_config_id'  => $config->id,
-                        'periodo_inicio'  => $inicio,
-                        'periodo_fin'     => $fin,
-                    ],
-                    [
-                        'estado'          => 'pendiente',
-                        'progreso_actual' => 0,
-                    ]
-                );
+                    // firstOrCreate es atómico: la constraint única pdr_asignada_periodo_unique
+                    // evita duplicados aunque el check + create manual no.
+                    try {
+                        $asignada = PdrMetaAsignada::firstOrCreate(
+                            [
+                                'supervisor_id'   => $supervisor->id,
+                                'meta_config_id'  => $config->id,
+                                'periodo_inicio'  => $inicio,
+                                'periodo_fin'     => $fin,
+                            ],
+                            [
+                                'estado'          => 'pendiente',
+                                'progreso_actual' => 0,
+                            ]
+                        );
 
-                if ($asignada->wasRecentlyCreated) {
-                    $created++;
+                        if ($asignada->wasRecentlyCreated) {
+                            $created++;
+                        }
+                    } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                        // Carrera con otro request o fila huérfana pre-fix:
+                        // contamos la fila sobreviviente como existente y seguimos.
+                        continue;
+                    }
                 }
             }
-        }
+        });
 
         return $created;
     }
