@@ -29,24 +29,27 @@ class PdrMetaService
 
         foreach ($supervisores as $supervisor) {
             foreach ($configs as $config) {
-                $inicio = $this->inicioPeriodo($fecha, $config->tipo_frecuencia);
-                $fin    = $this->finPeriodo($fecha, $config->tipo_frecuencia);
+                // Fechas como Y-m-d para evitar drift de hora/timezone y matchear
+                // exactamente lo guardado en BD.
+                $inicio = $this->inicioPeriodo($fecha, $config->tipo_frecuencia)->toDateString();
+                $fin    = $this->finPeriodo($fecha, $config->tipo_frecuencia)->toDateString();
 
-                $exists = PdrMetaAsignada::where('supervisor_id', $supervisor->id)
-                    ->where('meta_config_id', $config->id)
-                    ->where('periodo_inicio', $inicio)
-                    ->where('periodo_fin', $fin)
-                    ->exists();
-
-                if (! $exists) {
-                    PdrMetaAsignada::create([
+                // firstOrCreate es atómico: la constraint única pdr_asignada_periodo_unique
+                // evita duplicados aunque el check + create manual no.
+                $asignada = PdrMetaAsignada::firstOrCreate(
+                    [
                         'supervisor_id'   => $supervisor->id,
                         'meta_config_id'  => $config->id,
                         'periodo_inicio'  => $inicio,
                         'periodo_fin'     => $fin,
+                    ],
+                    [
                         'estado'          => 'pendiente',
                         'progreso_actual' => 0,
-                    ]);
+                    ]
+                );
+
+                if ($asignada->wasRecentlyCreated) {
                     $created++;
                 }
             }

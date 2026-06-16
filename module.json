@@ -19,15 +19,40 @@
         "template": "export",
         "ssoma": "view_ssoma",
         "certifications": "view_certificaciones",
-        "pdr": "view_pdr"
+        "pdr": "view_pdr",
+        "metas_config": "view_pdr_config",
+        "supervisores": "view_pdr_supervisores",
+        "asignadas": "view_pdr_asignadas",
+        "asignadas_generar": "manage_pdr_asignadas",
+        "ejecuciones": "execute_pdr",
+        "ejecuciones_show": "view_pdr_ejecucion",
+        "hallazgos": "view_pdr_hallazgos",
+        "resumen": "view_pdr_resumen",
+        "resumen_supervisores": "view_pdr_resumen_supervisores",
+        "pendientes": "view_pdr_pendientes",
+        "files": "view_pdr_files"
     },
     "permission_implies": {
         "manage_certificaciones": ["view_certificaciones"],
-        "manage_pdr_config": ["view_pdr"],
-        "manage_pdr_supervisors": ["view_pdr"],
-        "execute_pdr": ["view_pdr"],
-        "view_pdr_hallazgos": ["view_pdr"],
-        "manage_pdr_hallazgos": ["view_pdr_hallazgos", "view_pdr"]
+        "manage_pdr_config": ["view_pdr", "view_pdr_config", "view_pdr_resumen", "create", "update", "delete"],
+        "manage_pdr_supervisores": ["view_pdr", "view_pdr_supervisores", "view_pdr_resumen", "view_pdr_resumen_supervisores", "create", "update", "delete"],
+        "manage_pdr_asignadas": ["view_pdr", "view_pdr_asignadas", "create", "delete"],
+        "execute_pdr": ["view_pdr", "view_pdr_ejecucion", "create", "delete"],
+        "manage_pdr_hallazgos": ["view_pdr", "view_pdr_hallazgos", "update"],
+        "manage_pdr_files": ["view_pdr", "view_pdr_files", "delete"],
+        "view_pdr_config": ["view_pdr"],
+        "view_pdr_supervisores": ["view_pdr"],
+        "view_pdr": [
+            "view_pdr_config",
+            "view_pdr_supervisores",
+            "view_pdr_asignadas",
+            "view_pdr_ejecucion",
+            "view_pdr_hallazgos",
+            "view_pdr_files",
+            "view_pdr_resumen",
+            "view_pdr_resumen_supervisores",
+            "view_pdr_pendientes"
+        ]
     },
     "permissions": [
         { "action": "access", "display_name": "Trabajadores: Acceso Básico", "description": "Permite acceder al módulo" },
@@ -44,10 +69,20 @@
         { "action": "import", "display_name": "Trabajadores: Importar", "description": "Habilita la pestaña y botón de importar Excel" },
         { "action": "export", "display_name": "Trabajadores: Exportar", "description": "Habilita la exportación a Excel" },
         { "action": "view_pdr", "display_name": "PDR: Ver Panel", "description": "Permite ver el panel de Metas PDR para Supervisores" },
-        { "action": "manage_pdr_config", "display_name": "PDR: Gestionar Configuración", "description": "Permite crear, editar y desactivar metas configurables" },
-        { "action": "manage_pdr_supervisors", "display_name": "PDR: Gestionar Supervisores", "description": "Permite registrar y desactivar supervisores PDR" },
-        { "action": "execute_pdr", "display_name": "PDR: Registrar Ejecuciones", "description": "Permite registrar ejecuciones de metas y subir archivos" },
+        { "action": "view_pdr_asignadas", "display_name": "PDR: Ver Asignaciones", "description": "Permite ver la lista de metas asignadas por periodo" },
+        { "action": "view_pdr_ejecucion", "display_name": "PDR: Ver Ejecución", "description": "Permite ver el detalle de una ejecución" },
         { "action": "view_pdr_hallazgos", "display_name": "PDR: Ver Hallazgos", "description": "Permite ver el listado de hallazgos PDR" },
-        { "action": "manage_pdr_hallazgos", "display_name": "PDR: Gestionar Hallazgos", "description": "Permite resolver y cerrar hallazgos PDR" }
+        { "action": "view_pdr_files", "display_name": "PDR: Ver Archivos", "description": "Permite descargar archivos adjuntos a ejecuciones y hallazgos" },
+        { "action": "view_pdr_resumen", "display_name": "PDR: Ver Resumen", "description": "Permite ver el resumen del periodo actual" },
+        { "action": "view_pdr_resumen_supervisores", "display_name": "PDR: Ver Resumen de Supervisores", "description": "Permite ver el resumen por supervisor" },
+        { "action": "view_pdr_pendientes", "display_name": "PDR: Ver Pendientes", "description": "Permite ver la lista de tareas pendientes" },
+        { "action": "view_pdr_config", "display_name": "PDR: Ver Configuración", "description": "Permite ver las metas configurables y su catálogo" },
+        { "action": "view_pdr_supervisores", "display_name": "PDR: Ver Supervisores", "description": "Permite ver la lista de supervisores PDR" },
+        { "action": "manage_pdr_config", "display_name": "PDR: Gestionar Configuración", "description": "Permite crear, editar y desactivar metas configurables" },
+        { "action": "manage_pdr_supervisores", "display_name": "PDR: Gestionar Supervisores", "description": "Permite registrar y desactivar supervisores PDR" },
+        { "action": "manage_pdr_asignadas", "display_name": "PDR: Gestionar Asignaciones", "description": "Permite generar, listar y borrar asignaciones de metas por periodo" },
+        { "action": "execute_pdr", "display_name": "PDR: Registrar Ejecuciones", "description": "Permite registrar ejecuciones de metas y subir archivos" },
+        { "action": "manage_pdr_hallazgos", "display_name": "PDR: Gestionar Hallazgos", "description": "Permite resolver y cerrar hallazgos PDR" },
+        { "action": "manage_pdr_files", "display_name": "PDR: Gestionar Archivos", "description": "Permite borrar archivos adjuntos a ejecuciones y hallazgos" }
     ]
 }

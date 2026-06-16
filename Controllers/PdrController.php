@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  * ejecuciones con archivos, hallazgos y dashboard KPI.
  *
  * Permisos: segmento `pdr` → view_pdr (lectura).
- * Escritura: manage_pdr_config, manage_pdr_supervisors, execute_pdr, manage_pdr_hallazgos.
+ * Escritura: manage_pdr_config, manage_pdr_supervisores, execute_pdr, manage_pdr_hallazgos.
  */
 class PdrController extends Controller
 {
@@ -92,13 +92,15 @@ class PdrController extends Controller
 
         $validated = $request->validate([
             'nombre'             => 'string|max:255',
-            'slug'               => "string|max:255|unique:pdr_metas_config,slug,{$id}",
             'tipo_frecuencia'    => 'in:diaria,semanal,mensual',
             'cantidad_requerida' => 'integer|min:1',
             'es_obligatoria'     => 'boolean',
             'orden'              => 'integer|min:0',
             'is_active'          => 'boolean',
         ]);
+
+        // El slug es inmutable post-creación: descartarlo si viene en el body.
+        unset($validated['slug']);
 
         // Handle boolean fields correctly (cast from string "true"/"false"/"1"/"0")
         foreach (['es_obligatoria', 'is_active'] as $boolField) {
@@ -521,6 +523,7 @@ class PdrController extends Controller
         $desde = isset($validated['desde']) ? Carbon::parse($validated['desde']) : Carbon::now()->startOfMonth();
         $hasta = isset($validated['hasta']) ? Carbon::parse($validated['hasta']) : Carbon::now()->endOfMonth();
 
+
         // Monthly range (null supervisor_id = global aggregate)
         $mensual = $this->metaService->resumenSupervisor($supervisorId, $desde, $hasta);
 
@@ -562,6 +565,7 @@ class PdrController extends Controller
         $hasta     = Carbon::now()->endOfMonth();
         $hoyInicio = Carbon::now()->startOfDay();
         $hoyFin    = Carbon::now()->endOfDay();
+
 
         $supervisores = PdrSupervisor::with('trabajador')
             ->where('is_active', true)

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
     ClipboardDocumentCheckIcon,
     MegaphoneIcon,
@@ -6,6 +6,7 @@ import {
     DocumentTextIcon,
     ExclamationTriangleIcon,
     UserGroupIcon,
+    FlagIcon,
     ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
 import { usePdrMetasData } from '../hooks/usePdrMetasData';
@@ -16,17 +17,19 @@ import PdrPendientesList from './PdrPendientesList';
 import PdrEjecucionForm from './PdrEjecucionForm';
 import PdrHallazgosTab from './PdrHallazgosTab';
 import PdrSupervisoresModal from './PdrSupervisoresModal';
+import PdrMetasConfigModal from './PdrMetasConfigModal';
 import PdrSupervisoresResumen from './PdrSupervisoresResumen';
 import Toast from './ui/Toast';
 import Button from './ui/Button';
 
-const SUB_TABS = [
-    { key: 'inspecciones', label: 'Inspecciones', icon: ClipboardDocumentCheckIcon },
-    { key: 'charlas', label: 'Charlas', icon: MegaphoneIcon },
-    { key: 'ats', label: 'ATS', icon: ShieldExclamationIcon },
-    { key: 'reportes', label: 'Reportes', icon: DocumentTextIcon },
-    { key: 'hallazgos', label: 'HALLAZGOS', icon: ExclamationTriangleIcon },
-];
+/* Mapa de iconos por slug conocido; fallback genérico para metas nuevas. */
+const ICON_BY_SLUG = {
+    inspecciones: ClipboardDocumentCheckIcon,
+    charlas: MegaphoneIcon,
+    charla_seguridad: MegaphoneIcon,
+    ats: ShieldExclamationIcon,
+    reportes: DocumentTextIcon,
+};
 
 /**
  * PdrMetasTab — Orchestrator for PDR metas panel.
@@ -36,15 +39,50 @@ export default function PdrMetasTab() {
     const { auth } = usePage().props;
     const d = usePdrMetasData(auth);
     const [supervisoresOpen, setSupervisoresOpen] = useState(false);
+    const [metasConfigOpen, setMetasConfigOpen] = useState(false);
+
+    /* Sub-tabs dinámicos derivados de metasConfig (no hardcoded).
+       Sin supervisor seleccionado, solo HALLAZGOS está visible
+       (los tabs de meta requieren contexto por supervisor). */
+    const dynamicMetaTabs = useMemo(() => {
+        return (d.metasConfig || [])
+            .filter((m) => m.is_active)
+            .slice()
+            .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+            .map((m) => ({
+                key: m.slug,
+                label: m.nombre,
+                icon: ICON_BY_SLUG[m.slug] ?? DocumentTextIcon,
+            }));
+    }, [d.metasConfig]);
+
+    const subTabs = useMemo(() => {
+        if (!d.supervisorId) {
+            return [{ key: 'hallazgos', label: 'HALLAZGOS', icon: ExclamationTriangleIcon }];
+        }
+        return [
+            ...dynamicMetaTabs,
+            { key: 'hallazgos', label: 'HALLAZGOS', icon: ExclamationTriangleIcon },
+        ];
+    }, [d.supervisorId, dynamicMetaTabs]);
 
     const canManageSupervisors = d.permissions.manageSupervisors;
+    const canManageConfig = d.permissions.manageConfig;
 
-    const adminHeader = canManageSupervisors && (
-        <div className="flex items-center justify-end">
-            <Button variant="primary" size="sm" onClick={() => setSupervisoresOpen(true)}>
-                <UserGroupIcon className="mr-1.5 size-4" />
-                Gestionar Supervisores
-            </Button>
+    const adminHeader = (canManageSupervisors || canManageConfig) && (
+        <div className="flex flex-wrap items-center justify-end gap-2">
+            {canManageConfig && (
+                <Button variant="secondary" size="sm" onClick={() => setMetasConfigOpen(true)}>
+                    <FlagIcon className="mr-1.5 size-4" />
+                    Gestionar Metas
+                </Button>
+            )}
+            {canManageSupervisors && (
+                <Button variant="primary" size="sm" onClick={() => setSupervisoresOpen(true)}>
+                    <UserGroupIcon className="mr-1.5 size-4" />
+                    Gestionar Supervisores
+                </Button>
+            )}
         </div>
     );
 
@@ -57,6 +95,18 @@ export default function PdrMetasTab() {
             onCreateBatch={d.createSupervisorsBatch}
             onDeleteBatch={d.deleteSupervisorsBatch}
             onFetchTrabajadores={d.fetchTrabajadores}
+            saving={d.saving}
+        />
+    );
+
+    const metasConfigModal = canManageConfig && (
+        <PdrMetasConfigModal
+            open={metasConfigOpen}
+            onClose={() => setMetasConfigOpen(false)}
+            metasConfig={d.metasConfig}
+            onCreate={d.createMetaConfig}
+            onUpdate={d.updateMetaConfig}
+            onDeactivate={d.deactivateMetaConfig}
             saving={d.saving}
         />
     );
@@ -136,10 +186,10 @@ export default function PdrMetasTab() {
                 </div>
             )}
 
-            {/* Sub-tabs — sin supervisor solo aplica HALLAZGOS (resto requiere meta pendiente) */}
+            {/* Sub-tabs — dinámicos desde metasConfig cuando hay supervisor; HALLAZGOS siempre al final */}
             <div className="border-b border-gray-200">
                 <div className="-mb-px flex gap-1 overflow-x-auto" role="tablist">
-                    {(d.supervisorId ? SUB_TABS : SUB_TABS.filter(t => t.key === 'hallazgos')).map(({ key, label, icon: Icon }) => (
+                    {subTabs.map(({ key, label, icon: Icon }) => (
                         <button
                             key={key}
                             role="tab"
@@ -171,6 +221,7 @@ export default function PdrMetasTab() {
             )}
 
             {supervisoresModal}
+            {metasConfigModal}
             <Toast show={d.toast.show} message={d.toast.message} type={d.toast.type} />
         </div>
     );
