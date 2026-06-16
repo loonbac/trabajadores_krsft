@@ -31,15 +31,20 @@ export function usePdrMetasData(auth) {
         manageConfig: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_config'),
         manageSupervisors: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_supervisores'),
         manageHallazgos: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_hallazgos'),
-        // R4: un manager de config/supervisores también puede leer su propia
-        // sección (necesita ver para gestionar). El frontend no resuelve
-        // `permission_implies` transitivo (auth.user.permission_names son
-        // permisos directos del rol), así que aceptamos `view_*` OR `manage_*`.
+        // R6: un usuario con view_pdr (permiso base del módulo) también
+        // puede leer estas secciones. El backend respeta la implicación
+        // view_pdr → view_pdr_config (vía getImpliedByPermissions), pero
+        // el frontend no resuelve permission_implies transitivo, así que
+        // agregamos view_pdr explícitamente al OR. Patrón canónico para
+        // cada subrecurso X del módulo:
+        //   canReadX = (view_pdr) OR (view_pdr_X) OR (manage_pdr_X)
         canReadMetas: hasAnyPermission(auth, [
+            'module.trabajadoreskrsft.view_pdr',
             'module.trabajadoreskrsft.view_pdr_config',
             'module.trabajadoreskrsft.manage_pdr_config',
         ]),
         canReadSupervisores: hasAnyPermission(auth, [
+            'module.trabajadoreskrsft.view_pdr',
             'module.trabajadoreskrsft.view_pdr_supervisores',
             'module.trabajadoreskrsft.manage_pdr_supervisores',
         ]),
