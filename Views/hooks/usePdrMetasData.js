@@ -371,8 +371,15 @@ export function usePdrMetasData(auth) {
 
     /* ── Lifecycle ── */
     useEffect(() => {
-        Promise.all([fetchSupervisores(), fetchMetasConfig()]).then(() => setLoading(false));
-    }, [fetchSupervisores, fetchMetasConfig]);
+        // El backend ya no auto-genera en los GETs de resumen. Disparar la
+        // generación al mount (idempotente) para que las asignaciones del
+        // periodo actual existan antes de que el primer GET de resumen corra.
+        generarAsignadasActuales()
+            .catch(() => { /* idempotente: ignore errores */ })
+            .finally(() => {
+                Promise.all([fetchSupervisores(), fetchMetasConfig()]).then(() => setLoading(false));
+            });
+    }, [fetchSupervisores, fetchMetasConfig, generarAsignadasActuales]);
 
     // Auto-detect supervisor from auth user (solo si el usuario ES supervisor).
     // Si no, queda null => vista general (agregado global). No autoseleccionar.
