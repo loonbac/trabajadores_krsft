@@ -156,10 +156,10 @@ export default function PdrSupervisoresModal({
                 </>
             }
         >
-            <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-4">
+            <div className="flex min-h-0 flex-1 items-stretch gap-4">
                 {/* ── LEFT: Trabajadores disponibles ── */}
                 <div
-                    className={`krsft-fade-up flex h-full min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseLeft ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                 >
@@ -240,7 +240,7 @@ export default function PdrSupervisoresModal({
                 </div>
 
                 {/* ── CENTER: Action buttons ── */}
-                <div className="krsft-scale-in flex shrink-0 flex-col items-center justify-center gap-2 px-1 py-4">
+                <div className="krsft-scale-in flex w-12 shrink-0 flex-col items-center justify-center gap-2 py-4">
                     <ArrowBtn
                         title="Mover todos los visibles a la derecha"
                         onClick={moveAllRight}
@@ -276,7 +276,7 @@ export default function PdrSupervisoresModal({
 
                 {/* ── RIGHT: Supervisores PDR ── */}
                 <div
-                    className={`krsft-fade-up flex h-full min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseRight ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                     style={{ '--krsft-delay': '80ms' }}
