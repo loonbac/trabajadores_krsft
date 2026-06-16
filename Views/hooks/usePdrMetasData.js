@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { hasPermission } from '@/utils/permissions';
+import { hasPermission, hasAnyPermission } from '@/utils/permissions';
 import { getModuleName, getCsrfToken } from '../utils';
 
 const POLLING_MS = 30000;
@@ -31,8 +31,18 @@ export function usePdrMetasData(auth) {
         manageConfig: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_config'),
         manageSupervisors: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_supervisores'),
         manageHallazgos: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_hallazgos'),
-        canReadMetas: hasPermission(auth, 'module.trabajadoreskrsft.view_pdr_config'),
-        canReadSupervisores: hasPermission(auth, 'module.trabajadoreskrsft.view_pdr_supervisores'),
+        // R4: un manager de config/supervisores también puede leer su propia
+        // sección (necesita ver para gestionar). El frontend no resuelve
+        // `permission_implies` transitivo (auth.user.permission_names son
+        // permisos directos del rol), así que aceptamos `view_*` OR `manage_*`.
+        canReadMetas: hasAnyPermission(auth, [
+            'module.trabajadoreskrsft.view_pdr_config',
+            'module.trabajadoreskrsft.manage_pdr_config',
+        ]),
+        canReadSupervisores: hasAnyPermission(auth, [
+            'module.trabajadoreskrsft.view_pdr_supervisores',
+            'module.trabajadoreskrsft.manage_pdr_supervisores',
+        ]),
         canGenerateAsignaciones: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_asignadas'),
     }), [auth]);
 
