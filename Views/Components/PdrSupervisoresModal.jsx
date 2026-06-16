@@ -144,7 +144,7 @@ export default function PdrSupervisoresModal({
             open={open}
             onClose={handleClose}
             size="2xl"
-            bodyClassName="overflow-hidden"
+            bodyClassName="flex min-h-0 flex-col overflow-hidden"
             title="Gestionar Supervisores PDR"
             titleIcon={<UserGroupIcon className="size-5 text-primary" />}
             footer={
@@ -156,10 +156,10 @@ export default function PdrSupervisoresModal({
                 </>
             }
         >
-            <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-4">
+            <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-4">
                 {/* ── LEFT: Trabajadores disponibles ── */}
                 <div
-                    className={`krsft-fade-up flex min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex h-full min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseLeft ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                 >
@@ -276,7 +276,7 @@ export default function PdrSupervisoresModal({
 
                 {/* ── RIGHT: Supervisores PDR ── */}
                 <div
-                    className={`krsft-fade-up flex min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex h-full min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseRight ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                     style={{ '--krsft-delay': '80ms' }}
