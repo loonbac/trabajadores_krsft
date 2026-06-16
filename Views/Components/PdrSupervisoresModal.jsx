@@ -158,7 +158,7 @@ export default function PdrSupervisoresModal({
             <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-stretch">
                 {/* ── LEFT: Trabajadores disponibles ── */}
                 <div
-                    className={`krsft-fade-up flex flex-col rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex flex-col h-[70vh] overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseLeft ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                 >
@@ -195,7 +195,7 @@ export default function PdrSupervisoresModal({
                         Seleccionar todo ({leftCount}/{leftItems.length})
                     </label>
 
-                    <ul className="min-h-[280px] max-h-[400px] flex-1 overflow-y-auto divide-y divide-gray-50">
+                    <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-gray-50">
                         {leftItems.length === 0 ? (
                             <li className="krsft-fade-in px-4 py-10 text-center text-sm text-gray-400">
                                 {trabajadores.length === 0 ? 'Cargando...' : 'Sin trabajadores disponibles'}
@@ -275,7 +275,7 @@ export default function PdrSupervisoresModal({
 
                 {/* ── RIGHT: Supervisores PDR ── */}
                 <div
-                    className={`krsft-fade-up flex flex-col rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex flex-col h-[70vh] overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseRight ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                     style={{ '--krsft-delay': '80ms' }}
@@ -313,7 +313,7 @@ export default function PdrSupervisoresModal({
                         Seleccionar todo ({rightCount}/{rightItems.length})
                     </label>
 
-                    <ul className="min-h-[280px] max-h-[400px] flex-1 overflow-y-auto divide-y divide-gray-50">
+                    <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-gray-50">
                         {rightItems.length === 0 ? (
                             <li className="krsft-fade-in px-4 py-10 text-center text-sm text-gray-400">
                                 Sin supervisores registrados

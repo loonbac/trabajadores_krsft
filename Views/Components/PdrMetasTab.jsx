@@ -88,6 +88,7 @@ export default function PdrMetasTab() {
 
     const supervisoresModal = canManageSupervisors && (
         <PdrSupervisoresModal
+            size="2xl"
             open={supervisoresOpen}
             onClose={() => setSupervisoresOpen(false)}
             supervisores={d.supervisores}
