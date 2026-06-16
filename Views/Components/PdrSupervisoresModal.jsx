@@ -143,8 +143,8 @@ export default function PdrSupervisoresModal({
         <Modal
             open={open}
             onClose={handleClose}
-            size="2xl"
-            bodyClassName="flex h-[72vh] min-h-0 flex-col overflow-hidden"
+            size="xl"
+            bodyClassName="flex h-[66vh] min-h-0 flex-col overflow-hidden"
             title="Gestionar Supervisores PDR"
             titleIcon={<UserGroupIcon className="size-5 text-primary" />}
             footer={
