@@ -521,8 +521,6 @@ class PdrController extends Controller
         $desde = isset($validated['desde']) ? Carbon::parse($validated['desde']) : Carbon::now()->startOfMonth();
         $hasta = isset($validated['hasta']) ? Carbon::parse($validated['hasta']) : Carbon::now()->endOfMonth();
 
-        // Auto-generar asignaciones del periodo actual (idempotente: skip si ya existe).
-        $this->metaService->generarMetasPeriodo(Carbon::now(), $supervisorId);
 
         // Monthly range (null supervisor_id = global aggregate)
         $mensual = $this->metaService->resumenSupervisor($supervisorId, $desde, $hasta);
@@ -566,9 +564,6 @@ class PdrController extends Controller
         $hoyInicio = Carbon::now()->startOfDay();
         $hoyFin    = Carbon::now()->endOfDay();
 
-        // Asegurar que existan asignaciones del periodo actual para todos los
-        // supervisores activos antes de calcular el grid (idempotente).
-        $this->metaService->generarMetasPeriodo(Carbon::now(), null);
 
         $supervisores = PdrSupervisor::with('trabajador')
             ->where('is_active', true)
