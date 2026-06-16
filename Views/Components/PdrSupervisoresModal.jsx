@@ -196,7 +196,7 @@ export default function PdrSupervisoresModal({
                         Seleccionar todo ({leftCount}/{leftItems.length})
                     </label>
 
-                    <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-gray-50">
+                    <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain divide-y divide-gray-50">
                         {leftItems.length === 0 ? (
                             <li className="krsft-fade-in px-4 py-10 text-center text-sm text-gray-400">
                                 {trabajadores.length === 0 ? 'Cargando...' : 'Sin trabajadores disponibles'}
@@ -314,7 +314,7 @@ export default function PdrSupervisoresModal({
                         Seleccionar todo ({rightCount}/{rightItems.length})
                     </label>
 
-                    <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-gray-50">
+                    <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain divide-y divide-gray-50">
                         {rightItems.length === 0 ? (
                             <li className="krsft-fade-in px-4 py-10 text-center text-sm text-gray-400">
                                 Sin supervisores registrados
