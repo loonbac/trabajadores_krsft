@@ -29,8 +29,11 @@ export function usePdrMetasData(auth) {
         view: hasPermission(auth, 'module.trabajadoreskrsft.view_pdr'),
         execute: hasPermission(auth, 'module.trabajadoreskrsft.execute_pdr'),
         manageConfig: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_config'),
-        manageSupervisors: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_supervisors'),
+        manageSupervisors: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_supervisores'),
         manageHallazgos: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_hallazgos'),
+        canReadMetas: hasPermission(auth, 'module.trabajadoreskrsft.view_pdr_config'),
+        canReadSupervisores: hasPermission(auth, 'module.trabajadoreskrsft.view_pdr_supervisores'),
+        canGenerateAsignaciones: hasPermission(auth, 'module.trabajadoreskrsft.manage_pdr_asignadas'),
     }), [auth]);
 
     const showToast = useCallback((message, type = 'success') => {
@@ -43,12 +46,13 @@ export function usePdrMetasData(auth) {
 
     /* ── Fetchers ── */
     const fetchSupervisores = useCallback(async () => {
+        if (!permissions.canReadSupervisores) return;
         try {
             const res = await fetch(`${API}/supervisores?is_active=true`, { headers: hdrs(), cache: 'no-store' });
             const json = await res.json();
             if (json.success) setSupervisores(Array.isArray(json.data) ? json.data : []);
         } catch { /* silent */ }
-    }, []);
+    }, [permissions.canReadSupervisores]);
 
     const fetchSupervisoresResumen = useCallback(async () => {
         try {
@@ -59,12 +63,13 @@ export function usePdrMetasData(auth) {
     }, []);
 
     const fetchMetasConfig = useCallback(async () => {
+        if (!permissions.canReadMetas) return;
         try {
             const res = await fetch(`${API}/metas-config`, { headers: hdrs(), cache: 'no-store' });
             const json = await res.json();
             if (json.success) setMetasConfig(Array.isArray(json.data) ? json.data : []);
         } catch { /* silent */ }
-    }, []);
+    }, [permissions.canReadMetas]);
 
     // sId null/undefined => global aggregate (vista general)
     const fetchResumen = useCallback(async (sId) => {
@@ -119,12 +124,13 @@ export function usePdrMetasData(auth) {
         .replace(/^-+|-+$/g, ''), []);
 
     const generarAsignadasActuales = useCallback(async () => {
+        if (!permissions.canGenerateAsignaciones) return;
         await fetch(`${API}/asignadas/generar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...hdrs() },
             body: JSON.stringify({}),
         });
-    }, []);
+    }, [permissions.canGenerateAsignaciones]);
 
     const refreshMetaManagementState = useCallback(async () => {
         await Promise.all([
@@ -316,12 +322,10 @@ export function usePdrMetasData(auth) {
         try {
             const body = {
                 nombre: payload.nombre,
-                slug: slugify(payload.nombre),
                 tipo_frecuencia: payload.tipo_frecuencia,
                 cantidad_requerida: Number(payload.cantidad_requerida),
                 es_obligatoria: !!payload.es_obligatoria,
                 orden: payload.orden === '' || payload.orden == null ? 0 : Number(payload.orden),
-                is_active: payload.is_active,
             };
             const res = await fetch(`${API}/metas-config/${id}`, {
                 method: 'PUT',
@@ -344,7 +348,7 @@ export function usePdrMetasData(auth) {
         } finally {
             setSaving(false);
         }
-    }, [generarAsignadasActuales, refreshMetaManagementState, showToast, slugify]);
+    }, [generarAsignadasActuales, refreshMetaManagementState, showToast]);
 
     const deactivateMetaConfig = useCallback(async (id) => {
         setSaving(true);
