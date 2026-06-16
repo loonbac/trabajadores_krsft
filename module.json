@@ -19,15 +19,26 @@
         "template": "export",
         "ssoma": "view_ssoma",
         "certifications": "view_certificaciones",
-        "pdr": "view_pdr"
+        "pdr": "view_pdr",
+        "metas_config": "manage_pdr_config",
+        "supervisores": "manage_pdr_supervisors",
+        "asignadas": "view_pdr",
+        "asignadas_generar": "manage_pdr_config",
+        "ejecuciones": "execute_pdr",
+        "ejecuciones_show": "view_pdr",
+        "hallazgos": "view_pdr_hallazgos",
+        "resumen": "view_pdr",
+        "resumen_supervisores": "view_pdr",
+        "pendientes": "view_pdr",
+        "files": "view_pdr"
     },
     "permission_implies": {
         "manage_certificaciones": ["view_certificaciones"],
-        "manage_pdr_config": ["view_pdr"],
-        "manage_pdr_supervisors": ["view_pdr"],
-        "execute_pdr": ["view_pdr"],
+        "manage_pdr_config": ["view_pdr", "create", "update", "delete", "asignadas_generar"],
+        "manage_pdr_supervisors": ["view_pdr", "create", "update", "delete"],
+        "execute_pdr": ["view_pdr", "create"],
         "view_pdr_hallazgos": ["view_pdr"],
-        "manage_pdr_hallazgos": ["view_pdr_hallazgos", "view_pdr"]
+        "manage_pdr_hallazgos": ["view_pdr_hallazgos", "view_pdr", "update", "delete"]
     },
     "permissions": [
         { "action": "access", "display_name": "Trabajadores: Acceso Básico", "description": "Permite acceder al módulo" },
