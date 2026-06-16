@@ -144,6 +144,7 @@ export default function PdrSupervisoresModal({
             open={open}
             onClose={handleClose}
             size="2xl"
+            bodyClassName="overflow-hidden"
             title="Gestionar Supervisores PDR"
             titleIcon={<UserGroupIcon className="size-5 text-primary" />}
             footer={
@@ -155,10 +156,10 @@ export default function PdrSupervisoresModal({
                 </>
             }
         >
-            <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-stretch">
+            <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-4">
                 {/* ── LEFT: Trabajadores disponibles ── */}
                 <div
-                    className={`krsft-fade-up flex flex-col h-[70vh] overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseLeft ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                 >
@@ -239,7 +240,7 @@ export default function PdrSupervisoresModal({
                 </div>
 
                 {/* ── CENTER: Action buttons ── */}
-                <div className="krsft-scale-in flex flex-col items-center justify-center gap-2 px-1 py-4">
+                <div className="krsft-scale-in flex shrink-0 flex-col items-center justify-center gap-2 px-1 py-4">
                     <ArrowBtn
                         title="Mover todos los visibles a la derecha"
                         onClick={moveAllRight}
@@ -275,7 +276,7 @@ export default function PdrSupervisoresModal({
 
                 {/* ── RIGHT: Supervisores PDR ── */}
                 <div
-                    className={`krsft-fade-up flex flex-col h-[70vh] overflow-hidden rounded-lg border-2 transition-colors ${
+                    className={`krsft-fade-up flex min-h-0 flex-col overflow-hidden rounded-lg border-2 transition-colors ${
                         pulseRight ? 'border-emerald-400 bg-emerald-50/40' : 'border-gray-200 bg-white'
                     }`}
                     style={{ '--krsft-delay': '80ms' }}
